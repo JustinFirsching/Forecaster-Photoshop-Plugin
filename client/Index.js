@@ -1,8 +1,7 @@
-var csInterface = new CSInterface();
-// var csInterface = null
-const axios = require('axios')
-setTomorrow()
+import { get } from 'axios';
 
+var csInterface = new CSInterface();
+setDatePickerDefault()
 
 let isRunning = false
 const parameters = {}
@@ -31,105 +30,92 @@ parameters.area = {
 
 document.querySelector('.runMain').addEventListener('click', () => {
   if(!isRunning) {
-    isRunning = true;
+    isRunning = true
     getInfoAndRun()
+    // Reset this at the end?
+    isRunning = false
   }
 })
 
 
 
 function getInfoAndRun() {
-  let arr
-  csInterface.evalScript(`$._MYFUNCTIONS.getFilesInfo()`, async function(cb) {
-    arr = JSON.parse(cb)
-    if (!arr) {
+  csInterface.evalScript(`$._MYFUNCTIONS.getFilesInfo()`, async function(fileInfo) {
+    fileInfo = JSON.parse(fileInfo)
+    if (!fileInfo) {
       isRunning = false
       alert('Please open psd files with templates')
       return
     }
 
-    const params = await getParams(arr)
-    // alert(JSON.stringify(params))
+    const params = await getParams(fileInfo)
     run_main(params)
     isRunning = false
   })
 }
 
 function processTideData(data) {
-  let lowTide_top = null
-  let lowTide_bot = null
-  let lowTide_top_time = null
-  let lowTide_bot_time = null
-
-  let highTide_top = null
-  let highTide_bot = null
-  let highTide_top_time = null
-  let highTide_bot_time = null
+  let lowTide = { top: null, bot: null, top_time: null, bot_time: null };
+  let highTide = { top: null, bot: null, top_time: null, bot_time: null };
 
   for (const entry of data) {
     const currentNum = parseFloat(entry.v).toFixed(1)
     const timeString = entry.t.split(' ')[1]
     //low tide
     if (entry.type === 'L') {
-      if (lowTide_top == null) {
-        lowTide_top = currentNum
-        lowTide_top_time = timeString;
+      if (lowTide.top == null) {
+        lowTide.top = currentNum
+        lowTide.top_time = timeString;
       } else {
-
-        if (lowTide_top <= currentNum) {
-          lowTide_bot = currentNum
-          lowTide_bot_time = timeString
+        if (lowTide.top <= currentNum) {
+          lowTide.bot = currentNum
+          lowTide.bot_time = timeString
         } else {
-          lowTide_bot = lowTide_top
-          lowTide_top = currentNum
-          lowTide_bot_time = lowTide_top_time
-          lowTide_top_time = timeString
+          lowTide.bot = lowTide.top
+          lowTide.top = currentNum
+          lowTide.bot_time = lowTide.top_time
+          lowTide.top_time = timeString
         }
-
       }
     }
 
     //high tide
     if (entry.type === 'H') {
-      if (highTide_top == null) {
-        highTide_top = currentNum
-        highTide_top_time = timeString
+      if (highTide.top == null) {
+        highTide.top = currentNum
+        highTide.top_time = timeString
       } else {
-
-        if (highTide_top <= currentNum) {
-          highTide_bot = currentNum
-          highTide_bot_time = timeString
+        if (highTide.top <= currentNum) {
+          highTide.bot = currentNum
+          highTide.bot_time = timeString
         } else {
-          highTide_bot = highTide_top
-          highTide_top = currentNum
-          highTide_bot_time = highTide_top_time
-          highTide_top_time = timeString
+          highTide.bot = highTide.top
+          highTide.top = currentNum
+          highTide.bot_time = highTide.top_time
+          highTide.top_time = timeString
         }
-
       }
     }
   }
-  const lowtide_top_string = `${lowTide_top} ft @ ${convertTo12HourFormat(lowTide_top_time)}`
-  const lowtide_bot_string = lowTide_bot ? `${lowTide_bot} ft @ ${convertTo12HourFormat(lowTide_bot_time)}` : ''
-  const hightide_top_string = `${highTide_top} ft @ ${convertTo12HourFormat(highTide_top_time)}`
-  const hightide_bot_string = highTide_bot ? `${highTide_bot} ft @ ${convertTo12HourFormat(highTide_bot_time)}` : ''
+
+  let formatTideString = (height, time) => height ? `${height} ft @ ${convertTo12HourFormat(time)}` : ''
 
   return {
     lowtide: {
-      top: lowtide_top_string,
-      bot: lowtide_bot_string,
+      top: formatTideString(lowTide.top, lowTide.top_time),
+      bot: formatTideString(lowTide.bot, lowTide.bot_time),
     },
     hightide: {
-      top: hightide_top_string,
-      bot: hightide_bot_string,
+      top: formatTideString(highTide.top, highTide.top_time),
+      bot: formatTideString(highTide.bot, highTide.bot_time),
     }
   };
 }
 
 async function getParams(arr) {
-  const date = document.querySelector('#datepicker').value.replaceAll('-', '')
+  const date = document.querySelector('#datepicker').value
   const dataPromises = arr.map(async function(docInfo) {
-    const psdFileLocations = parameters.area[docInfo.fileName]
+    const psdFileLocations = parameters.area[docInfo.area]
     const tide1 = await fetchTideData(psdFileLocations.location1.station, date)
     const tide2 = await fetchTideData(psdFileLocations.location2.station, date)
     return {
@@ -146,6 +132,9 @@ async function getParams(arr) {
 }
 
 async function fetchTideData(station, date) {
+  // Adjust date format for API
+  data = date.replaceAll('-', '')
+
   const apiUrl = 'https://api.tidesandcurrents.noaa.gov/api/prod/datagetter';
   const params = {
     product: 'predictions',
@@ -161,7 +150,7 @@ async function fetchTideData(station, date) {
   };
 
   try {
-    const response = await axios.get(apiUrl, { params });
+    const response = await get(apiUrl, { params });
     const predictions = response.data.predictions;
     return processTideData(predictions)
     // Process the data as needed
@@ -170,49 +159,25 @@ async function fetchTideData(station, date) {
   }
 }
 
-function setTomorrow() {
-  const today = new Date();
-  const tomorrow = new Date(today);
-  tomorrow.setDate(today.getDate() + 1);
-
-  const year = tomorrow.getFullYear();
-  const month = (tomorrow.getMonth() + 1).toString().padStart(2, '0');
-  const day = tomorrow.getDate().toString().padStart(2, '0');
-
-  const tomorrowFormatted = `${year}-${month}-${day}`;
-  document.getElementById('datepicker').value = tomorrowFormatted;
-
+// Set the date picker to tomorrow's date
+function setDatePickerDefault() {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  document.getElementById('datepicker').value = tomorrow.toLocaleDateString('en-US')
 }
 
+// Use Date to convert 24 hour time to 12 hour time
 function convertTo12HourFormat(time24) {
   const [hours, minutes] = time24.split(':');
-  let period = 'AM';
-
-  let hours12 = parseInt(hours, 10);
-  if (hours12 >= 12) {
-    period = 'PM';
-    if (hours12 > 12) {
-      hours12 -= 12;
-    }
-  }
-
-  if (hours12 === 0) {
-    hours12 = 12;
-  }
-
-  return `${hours12}:${minutes} ${period}`;
+  let date = new Date(null, null, null, hours, minutes)
+  return date.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: true
+  })
 }
 
 function run_main(params) {
   var data = JSON.stringify(params)
-  csInterface.evalScript(`$._MYFUNCTIONS.run(${data})`, function(cb) {
-  })
+  csInterface.evalScript(`$._MYFUNCTIONS.run(${data})`)
 }
-
-// const parameters = {}
-// parameters.station = {
-//   'Caspersen' : '8725809',
-//   'Englewood' : '8725747',
-//   'Siesta' : '8726034',
-//   'Venice' : '8725889',
-// }
