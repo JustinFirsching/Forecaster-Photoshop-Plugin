@@ -99,21 +99,26 @@ function getFilesInformation() {
 }
 
 // Save the file
-function saveDoc(doc, name) {
+function saveDoc(doc, basename) {
   // TODO: Maybe a file browser in the Index html to select the folder to save to?
+  let targetFile = File(path.join(doc.path.absoluteURI, basename))
 
-  // TODO: Save as PSD and PNG
-  doc.saveAs(File(targetFilePath))
+  let jpegSaveOptions = new JPEGSaveOptions();
+  jpegSaveOptions.emdedColorProfile = true;
+  jpegSaveOptions.formatOptions = FormatOptions.STANDARDBASELINE;
+  jpegSaveOptions.quality = 12
 
-  let saveOpts = new JPEGSaveOptions();
-  let targetFilePath = path.join(doc.path.absoluteURI, name)
+  let psdSaveOptions = new PhotoshopSaveOptions()
+  psdSaveOptions.alphaChannels = true
+  psdSaveOptions.annotations = true
+  psdSaveOptions.embedColorProfile = true
+  psdSaveOptions.layers = true
+  psdSaveOptions.spotColors = true
 
-  saveOpts.emdedColorProfile = true;
-  saveOpts.formatOptions = FormatOptions.STANDARDBASELINE;
-  saveOpts.quality = 12
-
-
-  doc.saveAs(File(targetFilePath), saveOpts, true)
+  // Save all the file formats
+  (jpegSaveOptions, new PNGSaveOptions(), psdSaveOptions).forEach(function(saveOptions) {
+    doc.saveAs(targetFile, saveOptions, true)
+  })
 }
 
 function setTideData(data) {
