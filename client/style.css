@@ -9,7 +9,8 @@ body {
     justify-content: center;
     align-items: center;
     background: #201f1f;
-    
+    font-size: min(9vh, 5vw);
+
 }
 .progressbar{
     background-color: #F5A623;
@@ -26,21 +27,6 @@ body {
 }
 
 
-.myNumberInput::-webkit-inner-spin-button,
-.myNumberInput::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-  
-.myNumberInput {
-    background-color: #111;
-    color: #fff;
-    font-size: min(9vh, 5vw);
-    text-align: center;
-    border-style: none;
-  }
-
-
 .containter {
     width: 100%;
     height: 100%;
@@ -48,7 +34,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: space-around;
-    
+
 }
 button {
     font-size: 10vh;
@@ -131,4 +117,16 @@ button:after {
     background-color: floralwhite;
     border-radius: 1vw;
     cursor: pointer;
+  }
+
+#zipcode {
+    padding: 8px;
+    font-size: 16px;
+    border: none;
+    color: #ffffff;
+    border-radius: 4px;
+    width: 50vw;
+    height: 10vh;
+    font-size: 5vh;
+    background-color: #111;
   }
