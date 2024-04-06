@@ -197,14 +197,14 @@ function processForecastData(data) {
       if (dayCount > 0) {
         f.day.temperatureAvg /= dayCount
         f.day.temperatureApparentAvg /= dayCount
-        f.day.windDirection /= dayCount
+        f.day.windDirectionAvg /= dayCount
         // f.day.precipitation /= dayCount
       }
       // Night
       if (nightCount > 0) {
         f.night.temperatureAvg /= nightCount
         f.night.temperatureApparentAvg /= nightCount
-        f.night.windDirection /= nightCount
+        f.night.windDirectionAvg /= nightCount
         // f.night.precipitation /= dayCount
       }
 
@@ -230,11 +230,11 @@ function processForecastData(data) {
       f.day.temperatureMax = Math.max(forecast.temperature, f.day.temperatureMax || -999)
 
       // Wind
-      // TODO: If wind speed is less than 5, "light"
       f.day.windSpeedMin = Math.min(forecast.windSpeed, f.day.windSpeedMin || 999)
       f.day.windSpeedMax = Math.max(forecast.windSpeed, f.day.windSpeedMax || -999)
-      // TODO: If max - min > 45degrees => "variable" instead of average
-      f.day.windDirection = (f.day.windDirection || 0) + forecast.windDirection
+      f.day.windDirectionMin = Math.min(forecast.windDirection, (f.day.windDirectionMin || 999))
+      f.day.windDirectionMax = Math.max(forecast.windDirection, (f.day.windDirectionMax || -999))
+      f.day.windDirectionAvg = (f.day.windDirection || 0) + forecast.windDirection
 
       // Precipitation
       // Averaging doesn't work well, it leads to a lot of 0% hours pulling the chance way down.
@@ -251,11 +251,11 @@ function processForecastData(data) {
       f.night.temperatureMax = Math.max(forecast.temperature, f.night.temperatureMax || -999)
 
       // Wind
-      // TODO: If wind speed is less than 5, "light"
       f.night.windSpeedMin = Math.min(forecast.windSpeed, f.night.windSpeedMin || 999)
       f.night.windSpeedMax = Math.max(forecast.windSpeed, f.night.windSpeedMax || -999)
-      // TODO: If max - min > 45degrees => "variable" instead of average
-      f.night.windDirection = (f.night.windDirection || 0) + forecast.windDirection
+      f.night.windDirectionMin = Math.min(forecast.windDirection, (f.night.windDirectionMin || 999))
+      f.night.windDirectionMax = Math.max(forecast.windDirection, (f.night.windDirectionMax || -999))
+      f.night.windDirectionAvg = (f.night.windDirection || 0) + forecast.windDirection
 
       // Precipitation
       // See above comment in day about averaging
@@ -271,15 +271,13 @@ function processForecastData(data) {
     if (dayCount > 0) {
       f.day.temperatureAvg /= dayCount
       f.day.temperatureApparentAvg /= dayCount
-      f.day.windDirection /= dayCount
-      // f.day.precipitation /= dayCount
+      f.day.windDirectionAvg /= dayCount
     }
     // Night
     if (nightCount > 0) {
       f.night.temperatureAvg /= nightCount
       f.night.temperatureApparentAvg /= nightCount
-      f.night.windDirection /= nightCount
-      // f.night.precipitation /= dayCount
+      f.night.windDirectionAvg /= nightCount
     }
 
     forecasts.push(f)

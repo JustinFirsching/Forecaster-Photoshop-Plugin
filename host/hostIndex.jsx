@@ -198,13 +198,27 @@ function setTodayData(doc, data) {
 
   // Today wind
   let dayWindLayers = dayLayers.layers.getByName('wind')
-  dayWindLayers.artLayers.getByName('15 - 25').textItem.contents = `${dayData.windSpeedMin} - ${dayData.windSpeedMax}`
-  dayWindLayers.artLayers.getByName('WNW').textItem.contents = degreesToDirection(dayData.windDirectionAvg)
+  // Today wind speed
+  let windSpeedDay = dayData.windSpeedMax > 5 ? `${dayData.windSpeedMax} - ${dayData.windSpeedMin}` : "Light"
+  dayWindLayers.artLayers.getByName('15 - 25').textItem.contents = windSpeedDay
+  // Today wind direction
+  // This one is kind of tricky since 355 and 5 are only 10 degrees from each other, but not mathematically.
+  // To get around this we are going to compare >45 and < 315.
+  let dayWindDirectionDiff = dayData.windDirectionMax - dayData.windDirectionMin
+  let dayWindDirection = dayWindDirectionDiff > 45 && dayWindDirectionDiff < 315 ? "Variable" : degreesToDirection(dayData.windDirectionAvg)
+  dayWindLayers.artLayers.getByName('WNW').textItem.contents = degreesToDirection(dayWindDirection)
 
   // Tonight wind
   let nightWindLayers = nightLayers.layers.getByName('wind')
-  nightWindLayers.artLayers.getByName('10 - 20').textItem.contents = `${nightData.windSpeedMin} - ${nightData.windSpeedMax}`
-  nightWindLayers.artLayers.getByName('NNW').textItem.contents = degreesToDirection(nightData.windDirectionAvg)
+  // Tonight wind speed
+  let windSpeedNight = nightData.windSpeedMax > 5 ? `${nightData.windSpeedMax} - ${nightData.windSpeedMin}` : "Light"
+  nightWindLayers.artLayers.getByName('10 - 20').textItem.contents = windSpeedNight
+  // Tonight wind direction
+  // This one is kind of tricky since 355 and 5 are only 10 degrees from each other, but not mathematically.
+  // To get around this we are going to compare >45 and < 315.
+  let nightWindDirectionDiff = nightData.windDirectionMax - nightData.windDirectionMin
+  let nightWindDirection = nightWindDirectionDiff > 45 && nightWindDirectionDiff < 315 ? "Variable" : degreesToDirection(nightData.windDirectionAvg)
+  nightWindLayers.artLayers.getByName('NNW').textItem.contents = degreesToDirection(nightWindDirection)
 }
 
 function setFiveDayData(doc, data) {
