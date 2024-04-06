@@ -306,13 +306,12 @@ function setFiveDayData(doc, data) {
 
     // Precipitation
     // TODO: When preicipitation is <= 20%, just hide visibility on the layer
-    // TODO: Follow up with Joey on how to handle 20% day 80% night precip
-    let precipitation = dayOrNight != null && dayOrNight.precipitationProbability > 20 ? `${dayOrNight.precipitationProbability} %` : ""
+    let precipitation = dayData != null && dayData.precipitationProbability > 20 ? `${dayData.precipitationProbability} %` : ""
     dayLayers.layers.getByName("pop").artLayers.getByName(layerNames[i].precipitation) = precipitation
 
     // If possible, do the weather text prediction
     let conditions = "Raining Iguanas"
-    dayLayers.layers.getByname(layerNames[i].conditions) = conditions
+    dayLayers.layers.getByName(layerNames[i].conditions) = conditions
   }
 }
 
