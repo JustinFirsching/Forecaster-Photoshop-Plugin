@@ -186,23 +186,25 @@ function setTodayData(doc, data) {
   tdTemps.layers.getByName('feels like').artLayers.getByName('feels like 77').textItem.contents = `feels like ${dayData.temperatureApparentMax}`
 
   // Tonight temp
-  nightLayers.layers.getByName('temp night').artLayers.getByName(/* TODO */).textItem.contents = nightData.temperatureMin
+  nightLayers.layers.getByName('temp night').artLayers.getByName('53').textItem.contents = nightData.temperatureMin
 
   // Today precipitation
-  dayLayers.layers.getByName('% chance').artLayers.getByName(/* TODO */).textItem.contents = dayData.precipitationProbability * 100.0
+  let dayPrecip = Math.round(dayData.precipitationProbability * 100.0)
+  dayLayers.layers.getByName('% chance').artLayers.getByName('50%').textItem.contents = `${dayPrecip}%`
 
   // Tonight precipitation
-  nightLayers.layers.getByName('% chance').artLayers.getByName(/* TODO */).textItem.contents = nightData.precipitationProbability * 100.0
+  let nightPrecip = Math.round(nightData.precipitationProbability * 100.0)
+  nightLayers.layers.getByName('% chance').artLayers.getByName('10%').textItem.contents = `${nightPrecip}%`
 
   // Today wind
   let dayWindLayers = dayLayers.layers.getByName('wind')
-  dayWindLayers.artLayers.getByName(/* TODO */).textItem.contents = `${dayData.windSpeedMin} - ${dayData.windSpeedMax}`
-  dayWindLayers.artLayers.getByName(/* TODO */).textItem.contents = degreesToDirection(dayData.windDirectionAvg)
+  dayWindLayers.artLayers.getByName('15 - 25').textItem.contents = `${dayData.windSpeedMin} - ${dayData.windSpeedMax}`
+  dayWindLayers.artLayers.getByName('WNW').textItem.contents = degreesToDirection(dayData.windDirectionAvg)
 
   // Tonight wind
   let nightWindLayers = nightLayers.layers.getByName('wind')
-  nightWindLayers.artLayers.getByName(/* TODO */).textItem.contents = `${nightData.windSpeedMin} - ${nightData.windSpeedMax}`
-  nightWindLayers.artLayers.getByName(/* TODO */).textItem.contents = degreesToDirection(nightData.windDirectionAvg)
+  nightWindLayers.artLayers.getByName('10 - 20').textItem.contents = `${nightData.windSpeedMin} - ${nightData.windSpeedMax}`
+  nightWindLayers.artLayers.getByName('NNW').textItem.contents = degreesToDirection(nightData.windDirectionAvg)
 }
 
 function setFiveDayData(doc, data) {
