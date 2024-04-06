@@ -217,7 +217,50 @@ function setFiveDayData(doc, data) {
     return
   }
 
-  // Filter the data to only forecasts with a date greater than today
+  const layerNames = [
+    // Day 1
+    {
+      "day": "MON",
+      "tempHigh": "60",
+      "tempLow": "48",
+      "conditions": "Mostly Sunny",
+      "precipitation": "40%",
+    },
+    // Day 2
+    {
+      "day": "TUE",
+      "tempHigh": "64",
+      "tempLow": "52",
+      "conditions": "Mostly Sunny",
+      "precipitation": "20%",
+    },
+    // Day 3
+    {
+      "day": "WED",
+      "tempHigh": "68",
+      "tempLow": "53",
+      "conditions": "Partly Sunny",
+      "precipitation": "20%",
+    },
+    // Day 4
+    {
+      "day": "THU",
+      "tempHigh": "60",
+      "tempLow": "53",
+      "conditions": "Partly Sunny",
+      "precipitation": "20%",
+    },
+    // Day 5
+    {
+      "day": "FRI",
+      "tempHigh": "70",
+      "tempLow": "54",
+      "conditions": "Partly Sunny",
+      "precipitation": "20%",
+    },
+  ]
+
+  // Filter the data to only forecasts with a date greater than the requested date
   data.forecast = data.forecast.filter(function(item) {
     return new Date(item.date) > new Date(data.requestedDate)
   })
@@ -234,24 +277,42 @@ function setFiveDayData(doc, data) {
   let fiveDayLayers = doc.layers.getByName('5d')
   // data.forecast.length should never be more than 5 but just in case the API changes or something
   let maxDays = Math.min(5, data.forecast.length)
+
   for (var i = 0; i < maxDays; i++) {
-    let layerGroup = fiveDayLayers.layers.getByName(`d${i + 1}`).layers.getByName(`Group 1`)
+    let dayLayers = fiveDayLayers.layers.getByName(`d${i + 1}`)
+    let layerGroup = dayLayers.layers.getByName("Group 1")
 
     let forecast = data.forecast[i]
     let [dayData, nightData] = (forecat.day, forecast.night)
 
-    let dayLayers = doc.layers.getByName(`day ${i + 1}`)
-
+    // Set day of week
     // Day of Week as 3 letter abbreviation
-    layerGroup = new Date(forecast.date).toDateString().substring(0, 3)
+    let dayAbbrev = new Date(forecast.date).toDateString().substring(0, 3)
+    layerGroup.artLayers.getByName(layerNames[i].day).textItem.contents = dayAbbrev
+
+
+    // These are weird, but they get us the data we want, unless only the other is available
+    // if neither are available, just use `{}` so we don't `null` error
+    let dayOrNight = (dayData != null ? dayData : nightData) || {}
+    let nightOrDay = (nightData != null ? nightData : dayData) || {}
 
     // Temp High
+    let highTemp = dayOrNight.temperatureMax || "ERR"
+    layerGroup.artLayers.getByName(layerNames[i].tempHigh).textItem.contents = highTemp
+
     // Temp Low
+    let lowTemp = nightOrDay.temperatureMin || "ERR"
+    layerGroup.artLayers.getByName(layerNames[i].tempLow).textItem.contents = lowTemp
 
     // Precipitation
     // TODO: When preicipitation is <= 20%, just hide visibility on the layer
+    // TODO: Follow up with Joey on how to handle 20% day 80% night precip
+    let precipitation = dayOrNight != null && dayOrNight.precipitationProbability > 20 ? `${dayOrNight.precipitationProbability} %` : ""
+    dayLayers.layers.getByName("pop").artLayers.getByName(layerNames[i].precipitation) = precipitation
 
     // If possible, do the weather text prediction
+    let conditions = "Raining Iguanas"
+    dayLayers.layers.getByname(layerNames[i].conditions) = conditions
   }
 }
 
