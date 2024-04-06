@@ -24,10 +24,52 @@ if (!Array.prototype.forEach) {
   });
 }
 
+// create a function that converts a number from 0 to 360 into a cardinal or ordinal direction
+function degreesToDirection(degrees) {
+  if (degrees < 0 || degrees > 360) {
+    throw new Error('Invalid degrees')
+  }
+  if (degrees < 11.25) {
+    return 'N'
+  } else if (degrees < 33.75) {
+    return 'NNE'
+  } else if (degrees < 56.25) {
+    return 'NE'
+  } else if (degrees < 78.75) {
+    return 'ENE'
+  } else if (degrees < 101.25) {
+    return 'E'
+  } else if (degrees < 123.75) {
+    return 'ESE'
+  } else if (degrees < 146.25) {
+    return 'SE'
+  } else if (degrees < 168.75) {
+    return 'SSE'
+  } else if (degrees < 191.25) {
+    return 'S'
+  } else if (degrees < 213.75) {
+    return 'SSW'
+  } else if (degrees < 236.25) {
+    return 'SW'
+  } else if (degrees < 258.75) {
+    return 'WSW'
+  } else if (degrees < 281.25) {
+    return 'W'
+  } else if (degrees < 303.75) {
+    return 'WNW'
+  } else if (degrees < 326.25) {
+    return 'NW'
+  } else if (degrees < 348.75) {
+    return 'NNW'
+  } else {
+    return 'N'
+  }
+}
+
 $._MYFUNCTIONS = {
-  run: function(data) {
+  run: function(docData, forecastData) {
     // alert(data)
-    runMain(data)
+    runMain(docData, forecastData)
     return true
   },
   getFilesInfo: function() {
@@ -36,24 +78,35 @@ $._MYFUNCTIONS = {
 
 }
 
-// Custom struct of file info?? Not sure what good this does
+// This sets the file info so the rest of the script knows what data to fetch
 function getFilesInformation() {
   var arr = []
   for (var i = 0; i < app.documents.length; i++) {
-    if (app.documents[i].name.toLowerCase().indexOf('englewood') != -1) {
-      arr.push({ documentNum: i, area: 'englewood' })
+    // TODO: Get the doc name for tides so it is more specific
+    if (app.documents[i].name.toLowerCase().contains('englewood')) {
+      arr.push({ documentNum: i, area: 'englewood', type: "tides" })
     }
-    if (app.documents[i].name.toLowerCase().indexOf('venice') != -1) {
-      arr.push({ documentNum: i, area: 'venice' })
+    if (app.documents[i].name.toLowerCase().contains('venice')) {
+      arr.push({ documentNum: i, area: 'venice', type: "tides" })
+    }
+    if (app.documents[i].name.contains('Glance')) {
+      arr.push({ documentNum: i, type: "today" })
+    }
+    if (app.documents[i].name.contains('5_Day')) {
+      arr.push({ documentNum: i, type: "5_day" })
     }
   }
   return arr.length > 0 ? arr : null
 }
 
 // Save the file
-function saveDoc() {
+function saveDoc(doc, name) {
+  // TODO: Maybe a file browser in the Index html to select the folder to save to?
+
+  // TODO: Save as PSD and PNG
+  doc.saveAs(File(targetFilePath))
+
   let saveOpts = new JPEGSaveOptions();
-  let name = doc.name.split('_')[0] + data.date
   let targetFilePath = path.join(doc.path.absoluteURI, name)
 
   saveOpts.emdedColorProfile = true;
@@ -64,25 +117,172 @@ function saveDoc() {
   doc.saveAs(File(targetFilePath), saveOpts, true)
 }
 
-function runMain(params) {
+function setTideData(data) {
+  // If this isn't the tide psd, skip
+  if (data.type !== "tides") {
+    console.log('Not the tide doc... skipping tides')
+  }
+  // If we don't have tide data, skip
+  if (data.tideData == null) {
+    console.warn('No tide data... skipping tides')
+    return
+  }
+
+  // If we have a first location layer and tide data
+  if (doc.layers.getByName('location 1') != null && data.tideData.location1 != null) {
+    let loc1Layers = doc.layers.getByName('location 1').layers
+    loc1Layers.getByName('low tide copy').layers.getByName('time text').artLayers.getByName('top').textItem.contents = data.tideData.location1.hightide.top
+    loc1Layers.getByName('low tide copy').layers.getByName('time text').artLayers.getByName('bot').textItem.contents = data.tideData.location1.hightide.bot
+    loc1Layers.getByName('low tide').layers.getByName('time text').artLayers.getByName('top').textItem.contents = data.tideData.location1.lowtide.top
+    loc1Layers.getByName('low tide').layers.getByName('time text').artLayers.getByName('bot').textItem.contents = data.tideData.location1.lowtide.bot
+  }
+
+  // If we have a second location layer and tide data
+  if (doc.layers.getByName('location 2') != null && data.tideData.location2 != null) {
+    var loc2Layers = doc.layers.getByName('location 2').layers
+    loc2Layers.getByName('low tide copy').layers.getByName('time text').artLayers.getByName('top').textItem.contents = data.tideData.location2.hightide.top
+    loc2Layers.getByName('low tide copy').layers.getByName('time text').artLayers.getByName('bot').textItem.contents = data.tideData.location2.hightide.bot
+    loc2Layers.getByName('low tide').layers.getByName('time text').artLayers.getByName('top').textItem.contents = data.tideData.location2.lowtide.top
+    loc2Layers.getByName('low tide').layers.getByName('time text').artLayers.getByName('bot').textItem.contents = data.tideData.location2.lowtide.bot
+  }
+}
+
+function setTodayData(doc, data) {
+  if (data.type != "today") {
+    console.log("Not the today/tonight doc... skipping today/tonight forecast")
+    return
+  }
+
+  if (data.forecast == null) {
+    console.error("No forecast data... skipping today/tonight forecast")
+    return
+  }
+
+  // Break into today and tonight data
+  // Filter the data from data.forecast to the item that has a date element with today's date
+  let todayData = data.forecast.filter(function(item) {
+    return new Date(item.date).getDate() === new Date(data.requestedDate).getDate()
+  })[0]
+
+  if (todayData == null) {
+    console.error("No today data... skipping today forecast")
+    return
+  }
+
+  // TODO: Insert the correct date in %m/%d/%Y format
+
+  let [dayData, nightData] = (todayData.day, todayData.night)
+
+  // Root layer groups
+  let tdTnLayers = doc.layers.getByName('td tn')
+  let dayLayers = tdTnLayers.layers.getByName('day')
+  let nightLayers = tdTnLayers.layers.getByName('night')
+
+  // Today temp
+  let tdTemps = dayLayers.layers.getByName('temps')
+  // Actual
+  tdTemps.layers.getByName('temp day').artLayers.getByName('77').textItem.contents = dayData.temperatureMax
+  // Feels Like
+  tdTemps.layers.getByName('feels like').artLayers.getByName('feels like 77').textItem.contents = `feels like ${dayData.temperatureApparentMax}`
+
+  // Tonight temp
+  nightLayers.layers.getByName('temp night').artLayers.getByName(/* TODO */).textItem.contents = nightData.temperatureMin
+
+  // Today precipitation
+  dayLayers.layers.getByName('% chance').artLayers.getByName(/* TODO */).textItem.contents = dayData.precipitationProbability * 100.0
+
+  // Tonight precipitation
+  nightLayers.layers.getByName('% chance').artLayers.getByName(/* TODO */).textItem.contents = nightData.precipitationProbability * 100.0
+
+  // Today wind
+  let dayWindLayers = dayLayers.layers.getByName('wind')
+  dayWindLayers.artLayers.getByName(/* TODO */).textItem.contents = `${dayData.windSpeedMin} - ${dayData.windSpeedMax}`
+  dayWindLayers.artLayers.getByName(/* TODO */).textItem.contents = degreesToDirection(dayData.windDirectionAvg)
+
+  // Tonight wind
+  let nightWindLayers = nightLayers.layers.getByName('wind')
+  nightWindLayers.artLayers.getByName(/* TODO */).textItem.contents = `${nightData.windSpeedMin} - ${nightData.windSpeedMax}`
+  nightWindLayers.artLayers.getByName(/* TODO */).textItem.contents = degreesToDirection(nightData.windDirectionAvg)
+}
+
+function setFiveDayData(doc, data) {
+  // TODO: This
+  if (data.type != "5_day") {
+    console.log("Not the 5 day doc... skipping 5 day forecast")
+    return
+  }
+
+  if (data.forecast == null) {
+    console.error("No forecast data... skipping 5 day forecast")
+    return
+  }
+
+  // Filter the data to only forecasts with a date greater than today
+  data.forecast = data.forecast.filter(function(item) {
+    return new Date(item.date) > new Date(data.requestedDate)
+  })
+
+  if (data.forecast == null) {
+    console.error("No data to create 5 day forecast...")
+    return
+  }
+
+  if (data.forecast.length < 5) {
+    console.warn("Not enough data for a full 5 day forecast... Doing what we can...")
+  }
+
+  let fiveDayLayers = doc.layers.getByName('5d')
+  // data.forecast.length should never be more than 5 but just in case the API changes or something
+  let maxDays = Math.min(5, data.forecast.length)
+  for (var i = 0; i < maxDays; i++) {
+    let layerGroup = fiveDayLayers.layers.getByName(`d${i + 1}`).layers.getByName(`Group 1`)
+
+    let forecast = data.forecast[i]
+    let [dayData, nightData] = (forecat.day, forecast.night)
+
+    let dayLayers = doc.layers.getByName(`day ${i + 1}`)
+
+    // Day of Week as 3 letter abbreviation
+    layerGroup = new Date(forecast.date).toDateString().substring(0, 3)
+
+    // Temp High
+    // Temp Low
+
+    // Precipitation
+    // TODO: When preicipitation is <= 20%, just hide visibility on the layer
+
+    // If possible, do the weather text prediction
+  }
+}
+
+// Fill the data into the PSD
+function fillData(doc, data) {
+  if (data == null) {
+    alert('No data!')
+    return
+  }
+
+  switch (data.type) {
+    case "tide": setTideData(doc, data); break;
+    case "today": setTodayData(doc, data); break;
+    case "5_day": setFiveDayData(doc, data); break;
+    case "sunrise_sunset": setSunriseSunset(doc, data); break;
+  }
+}
+
+function runMain(weatherData) {
+  // Params is a list of the return of getParams in client/Index.js
   try {
-    params.forEach(function(data) {
+    weatherData.forEach(function(data) {
       var doc = app.documents[parseInt(data.documentNum)]
 
+      // Set the active document in Photoshop to the document we are working with
       app.activeDocument = doc
-      var loc1Layers = doc.layers.getByName('location 1').layers
-      loc1Layers.getByName('low tide copy').layers.getByName('time text').artLayers.getByName('top').textItem.contents = data.location1.hightide.top
-      loc1Layers.getByName('low tide copy').layers.getByName('time text').artLayers.getByName('bot').textItem.contents = data.location1.hightide.bot
-      loc1Layers.getByName('low tide').layers.getByName('time text').artLayers.getByName('top').textItem.contents = data.location1.lowtide.top
-      loc1Layers.getByName('low tide').layers.getByName('time text').artLayers.getByName('bot').textItem.contents = data.location1.lowtide.bot
+      fillData(doc, data)
 
-      var loc2Layers = doc.layers.getByName('location 2').layers
-      loc2Layers.getByName('low tide copy').layers.getByName('time text').artLayers.getByName('top').textItem.contents = data.location2.hightide.top
-      loc2Layers.getByName('low tide copy').layers.getByName('time text').artLayers.getByName('bot').textItem.contents = data.location2.hightide.bot
-      loc2Layers.getByName('low tide').layers.getByName('time text').artLayers.getByName('top').textItem.contents = data.location2.lowtide.top
-      loc2Layers.getByName('low tide').layers.getByName('time text').artLayers.getByName('bot').textItem.contents = data.location2.lowtide.bot
-
-      saveDoc()
+      // TODO: Fix this. This is horrendous
+      let name = `${doc.name.split('.')[0]}_${data.date.substring(4, 6)}_${data.date.substring(6, 8)}`
+      saveDoc(doc, name)
     })
 
   } catch (error) {
