@@ -222,7 +222,6 @@ function setTodayData(doc, data) {
 }
 
 function setFiveDayData(doc, data) {
-  // TODO: This
   if (data.type != "5_day") {
     console.log("Not the 5 day doc... skipping 5 day forecast")
     return
@@ -306,26 +305,20 @@ function setFiveDayData(doc, data) {
     let dayAbbrev = new Date(forecast.date).toDateString().substring(0, 3)
     layerGroup.artLayers.getByName(layerNames[i].day).textItem.contents = dayAbbrev
 
-
-    // These are weird, but they get us the data we want, unless only the other is available
-    // if neither are available, just use `{}` so we don't `null` error
-    let dayOrNight = (dayData != null ? dayData : nightData) || {}
-    let nightOrDay = (nightData != null ? nightData : dayData) || {}
-
     // Temp High
-    let highTemp = dayOrNight.temperatureMax || "ERR"
+    let highTemp = dayData.temperatureMax || "ERR"
     layerGroup.artLayers.getByName(layerNames[i].tempHigh).textItem.contents = highTemp
 
     // Temp Low
-    let lowTemp = nightOrDay.temperatureMin || "ERR"
+    let lowTemp = nightData.temperatureMin || "ERR"
     layerGroup.artLayers.getByName(layerNames[i].tempLow).textItem.contents = lowTemp
 
     // Precipitation
     // TODO: When preicipitation is <= 20%, just hide visibility on the layer
-    let precipitation = dayData != null && dayData.precipitationProbability > 20 ? `${dayData.precipitationProbability} %` : ""
+    let precipitation = dayData != null && dayData.precipitationProbability > 20 ? `${dayData.precipitationProbability}%` : ""
     dayLayers.layers.getByName("pop").artLayers.getByName(layerNames[i].precipitation) = precipitation
 
-    // If possible, do the weather text prediction
+    // TODO: If possible, do the weather text prediction
     let conditions = "Raining Iguanas"
     dayLayers.layers.getByName(layerNames[i].conditions) = conditions
   }
