@@ -82,11 +82,10 @@ $._MYFUNCTIONS = {
 function getFilesInformation() {
   var arr = []
   for (var i = 0; i < app.documents.length; i++) {
-    // TODO: Get the doc name for tides so it is more specific
-    if (app.documents[i].name.toLowerCase().contains('englewood')) {
+    if (app.documents[i].name.toLowerCase().contains('englewood_beach_forecast')) {
       arr.push({ documentNum: i, area: 'englewood', type: "tides" })
     }
-    if (app.documents[i].name.toLowerCase().contains('venice')) {
+    if (app.documents[i].name.toLowerCase().contains('venice_beach_forecast')) {
       arr.push({ documentNum: i, area: 'venice', type: "tides" })
     }
     if (app.documents[i].name.contains('Glance')) {
