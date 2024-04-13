@@ -1,0 +1,65 @@
+{
+  "manifestVersion" : 4,
+  "name" : "Forecaster UXP",
+  "host" : {
+    "app" : "PS",
+    "minVersion" : "23.0.0",
+    "data" : {
+      "apiVersion" : 2
+    }
+  },
+  "main" : "index.html",
+  "entrypoints" : [ {
+    "minimumSize" : {
+      "width" : 230,
+      "height" : 200
+    },
+    "maximumSize" : {
+      "width" : 2000,
+      "height" : 2000
+    },
+    "preferredDockedSize" : {
+      "width" : 230,
+      "height" : 300
+    },
+    "id" : "vanilla",
+    "label" : {
+      "default" : "Starter Panel"
+    },
+    "type" : "panel",
+    "icons" : [ {
+      "path" : "icons/icon_D.png",
+      "species" : [ "generic" ],
+      "width" : 32,
+      "scale" : [ 1, 2 ],
+      "theme" : [ "dark", "darkest" ],
+      "height" : 32
+    }, {
+      "path" : "icons/icon_N.png",
+      "species" : [ "generic" ],
+      "width" : 32,
+      "scale" : [ 1, 2 ],
+      "theme" : [ "lightest", "light" ],
+      "height" : 32
+    } ],
+    "preferredFloatingSize" : {
+      "width" : 230,
+      "height" : 300
+    }
+  } ],
+  "id" : "ac459d69",
+  "icons" : [ {
+    "path" : "icons/dark.png",
+    "width" : 23,
+    "scale" : [ 1, 2 ],
+    "theme" : [ "darkest", "dark", "medium" ],
+    "height" : 23
+  }, {
+    "path" : "icons/light.png",
+    "width" : 23,
+    "scale" : [ 1, 2 ],
+    "theme" : [ "lightest", "light" ],
+    "height" : 23
+  } ],
+  "version" : "1.0.0"
+}
