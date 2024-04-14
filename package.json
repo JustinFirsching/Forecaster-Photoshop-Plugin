@@ -1,7 +1,7 @@
 {
-  "name": "uxp-template-ps-starter",
+  "name": "com.github.justinfirsching.forecaster-photoshop-plugin",
   "version": "1.0.0",
-  "description": "Starter template for creating Adobe UXP based-Photoshop plugin.",
+  "description": "A Photoshop plugin for filling VFFWS PSDs with forecast data",
   "author": "Adobe Inc",
   "license": "Apache-2.0"
 }
