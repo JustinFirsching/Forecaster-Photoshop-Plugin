@@ -81,6 +81,7 @@ async function run() {
     alert('Please open psd files with templates')
     return
   }
+  console.log(fileInfo)
 
   const weatherData = await getWeatherData(fileInfo)
   weatherData.forEach(data => {
