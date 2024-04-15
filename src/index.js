@@ -84,6 +84,7 @@ async function run() {
 
   const weatherData = await getWeatherData(fileInfo)
   weatherData.forEach(data => {
+    console.log(data)
     var doc = app.documents[data.documentNum]
 
     // Set the active document in Photoshop to the document we are working with
