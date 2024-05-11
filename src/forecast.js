@@ -1,6 +1,7 @@
 function getWindSpeedText(averageSpeed) {
-  var windSpeedText = "Unknown"
   console.log(`The average speed is ${averageSpeed}`)
+
+  var windSpeedText = "Unknown"
   if (averageSpeed < 5) {
     windSpeedText = "Light"
   } else if (averageSpeed < 10) {
@@ -26,6 +27,11 @@ function getWindSpeedText(averageSpeed) {
   }
   return windSpeedText
 }
+
+const getPrecipitationText = (precipitation) =>
+  precipitation != null ?
+    precipitation > 20 ? `${Math.round(precipitation / 5) * 5}%` : ""
+    : "Unknown"
 
 // Iterate through the elements of the `data` array
 // Each element has a `time` property that is a string in the format "YYYY-MM-DDTHH:MM:SSZ"
@@ -205,11 +211,10 @@ function setTodayData(doc, data) {
   nightLayers.layers.getByName('temp night').layers.getByName('53').textItem.contents = `${Math.round(nightData.temperatureMin)}`
 
   // Today precipitation
-  // TODO: Fine tune to the nearest 5%
-  dayLayers.layers.getByName('% chance').layers.getByName('50%').textItem.contents = `${Math.round(dayData.precipitation)}%`
+  dayLayers.layers.getByName('% chance').layers.getByName('50%').textItem.contents = getPrecipitationText(dayData.precipitation)
 
   // Tonight precipitation
-  nightLayers.layers.getByName('% chance').layers.getByName('10%').textItem.contents = `${Math.round(nightData.precipitation)}%`
+  nightLayers.layers.getByName('% chance').layers.getByName('10%').textItem.contents = getPrecipitationText(nightData.precipitation)
 
   // Today wind
   let dayWindLayers = dayLayers.layers.getByName('wind')
@@ -330,8 +335,7 @@ function setFiveDayData(doc, data) {
     layerGroup.artLayers.getByName(layerNames[i].tempLow).textItem.contents = lowTemp
 
     // Precipitation
-    // TODO: When preicipitation is <= 20%, just hide visibility on the layer
-    let precipitation = dayData != null && dayData.precipitationProbability > 20 ? `${dayData.precipitationProbability}%` : ""
+    let precipitation = dayData != null ? getPrecipitationText(dayData.precipitation) : ""
     dayLayers.layers.getByName("pop").artLayers.getByName(layerNames[i].precipitation) = precipitation
 
     // TODO: If possible, do the weather text prediction
