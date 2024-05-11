@@ -1,5 +1,5 @@
 // Use Date to convert 24 hour time to 12 hour time
-export function convertTo12HourFormat(time24) {
+function convertTo12HourFormat(time24) {
   const [hours, minutes] = time24.split(':');
   let date = new Date(null, null, null, hours, minutes)
   return date.toLocaleTimeString('en-US', {
@@ -9,7 +9,7 @@ export function convertTo12HourFormat(time24) {
   })
 }
 
-export function degreesToDirection(degrees) {
+function degreesToDirection(degrees) {
   if (degrees < 0 || degrees > 360) {
     throw new Error('Invalid degrees')
   }
@@ -51,7 +51,7 @@ export function degreesToDirection(degrees) {
 }
 
 // Save the file
-export function saveDoc(doc, basename) {
+function saveDoc(doc, basename) {
   // TODO: Maybe a file browser in the Index html to select the folder to save to?
   let dirname = File(doc.path.absoluteURI).parent.fsName
 

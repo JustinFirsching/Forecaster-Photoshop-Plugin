@@ -16,8 +16,7 @@ const parameters = {
     }
   }
 }
-
-export function processTideData(data) {
+function processTideData(data) {
   let lowTide = { top: null, bot: null, top_time: null, bot_time: null };
   let highTide = { top: null, bot: null, top_time: null, bot_time: null };
 
@@ -103,7 +102,7 @@ async function fetchTideFromStation(station, date) {
   }
 }
 
-export async function fetchTideData(area, date) {
+async function fetchTideData(area, date) {
   stations = parameters.tideStations[area]
   return {
     location1: await fetchTideFromStation(stations.location1, date),
@@ -111,7 +110,7 @@ export async function fetchTideData(area, date) {
   }
 }
 
-export function setTideData(doc, data) {
+function setTideData(doc, data) {
   // If this isn't the tide psd, skip
   if (data.type !== "tides") {
     console.log('Not the tide doc... skipping tides')
@@ -140,3 +139,4 @@ export function setTideData(doc, data) {
     loc2Layers.getByName('low tide').layers.getByName('time text').artLayers.getByName('bot').textItem.contents = data.tideData.location2.lowtide.bot
   }
 }
+

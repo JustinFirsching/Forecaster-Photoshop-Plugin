@@ -1,5 +1,31 @@
-import { API_KEY_TOMORROW_IO } from "./const.js"
-import { degreesToDirection } from "./utils.js"
+function getWindSpeedText(averageSpeed) {
+  var windSpeedText = "Unknown"
+  console.log(`The average speed is ${averageSpeed}`)
+  if (averageSpeed < 5) {
+    windSpeedText = "Light"
+  } else if (averageSpeed < 10) {
+    windSpeedText = "5 - 10"
+  } else if (averageSpeed < 15) {
+    windSpeedText = "10 - 15"
+  } else if (averageSpeed < 20) {
+    windSpeedText = "15 - 20"
+  } else if (averageSpeed < 25) {
+    windSpeedText = "20 - 25"
+  } else if (averageSpeed < 30) {
+    windSpeedText = "25 - 30"
+  } else if (averageSpeed < 35) {
+    windSpeedText = "30 - 30"
+  } else if (averageSpeed < 40) {
+    windSpeedText = "35 - 40"
+  } else if (averageSpeed < 45) {
+    windSpeedText = "40 - 40"
+  } else if (averageSpeed < 50) {
+    windSpeedText = "45 - 50"
+  } else {
+    windSpeedText = "DANGER"
+  }
+  return windSpeedText
+}
 
 // Iterate through the elements of the `data` array
 // Each element has a `time` property that is a string in the format "YYYY-MM-DDTHH:MM:SSZ"
@@ -35,15 +61,15 @@ function processForecastData(data) {
       if (dayCount > 0) {
         f.day.temperatureAvg /= dayCount
         f.day.temperatureApparentAvg /= dayCount
+        f.day.windSpeedAvg /= dayCount
         f.day.windDirectionAvg /= dayCount
-        // f.day.precipitation /= dayCount
       }
       // Night
       if (nightCount > 0) {
         f.night.temperatureAvg /= nightCount
         f.night.temperatureApparentAvg /= nightCount
+        f.night.windSpeedAvg /= nightCount
         f.night.windDirectionAvg /= nightCount
-        // f.night.precipitation /= dayCount
       }
 
       forecasts.push(f)
@@ -66,8 +92,10 @@ function processForecastData(data) {
       f.day.temperatureApparentAvg = (f.day.temperatureApparent || 0) + forecast.temperatureApparent
       f.day.temperatureMin = Math.min(forecast.temperature, f.day.temperatureMin || 999)
       f.day.temperatureMax = Math.max(forecast.temperature, f.day.temperatureMax || -999)
+      f.day.temperatureApparentMax = Math.max(forecast.temperatureApparent, f.day.temperatureApparentMax || -999)
 
       // Wind
+      f.day.windSpeedAvg = (f.day.windSpeedAvg || 0) + forecast.windSpeed
       f.day.windSpeedMin = Math.min(forecast.windSpeed, f.day.windSpeedMin || 999)
       f.day.windSpeedMax = Math.max(forecast.windSpeed, f.day.windSpeedMax || -999)
       f.day.windDirectionMin = Math.min(forecast.windDirection, (f.day.windDirectionMin || 999))
@@ -87,8 +115,10 @@ function processForecastData(data) {
       f.night.temperatureApparentAvg = (f.night.temperatureApparent || 0) + forecast.temperatureApparent
       f.night.temperatureMin = Math.min(forecast.temperature, f.night.temperatureMin || 999)
       f.night.temperatureMax = Math.max(forecast.temperature, f.night.temperatureMax || -999)
+      f.night.temperatureApparentMax = Math.max(forecast.temperatureApparent, f.night.temperatureApparentMax || -999)
 
       // Wind
+      f.night.windSpeedAvg = (f.night.windSpeedAvg || 0) + forecast.windSpeed
       f.night.windSpeedMin = Math.min(forecast.windSpeed, f.night.windSpeedMin || 999)
       f.night.windSpeedMax = Math.max(forecast.windSpeed, f.night.windSpeedMax || -999)
       f.night.windDirectionMin = Math.min(forecast.windDirection, (f.night.windDirectionMin || 999))
@@ -109,12 +139,14 @@ function processForecastData(data) {
     if (dayCount > 0) {
       f.day.temperatureAvg /= dayCount
       f.day.temperatureApparentAvg /= dayCount
+      f.day.windSpeedAvg /= dayCount
       f.day.windDirectionAvg /= dayCount
     }
     // Night
     if (nightCount > 0) {
       f.night.temperatureAvg /= nightCount
       f.night.temperatureApparentAvg /= nightCount
+      f.night.windSpeedAvg /= nightCount
       f.night.windDirectionAvg /= nightCount
     }
 
@@ -123,15 +155,14 @@ function processForecastData(data) {
 
   return forecasts
 }
-
-export async function fetchForecast(zipcode) {
+async function fetchForecast(zipcode) {
   let apiUrl = `https://api.tomorrow.io/v4/weather/forecast?location=${zipcode}%20US&units=imperial&timesteps=1h&apikey=${API_KEY_TOMORROW_IO}`
   return await fetch(apiUrl)
-    .then( response => response.json())
+    .then(response => response.json())
     .then(data => processForecastData(data.timelines.hourly))
 }
 
-export function setTodayData(doc, data) {
+function setTodayData(doc, data) {
   if (data.type != "today") {
     console.log("Not the today/tonight doc... skipping today/tonight forecast")
     return
@@ -155,7 +186,8 @@ export function setTodayData(doc, data) {
 
   // TODO: Insert the correct date in %m/%d/%Y format
 
-  let [dayData, nightData] = (todayData.day, todayData.night)
+  let dayData = todayData.day
+  let nightData = todayData.night
 
   // Root layer groups
   let tdTnLayers = doc.layers.getByName('td tn')
@@ -165,47 +197,45 @@ export function setTodayData(doc, data) {
   // Today temp
   let tdTemps = dayLayers.layers.getByName('temps')
   // Actual
-  tdTemps.layers.getByName('temp day').artLayers.getByName('77').textItem.contents = dayData.temperatureMax
+  tdTemps.layers.getByName('temp day').layers.getByName('70').textItem.contents = `${Math.round(dayData.temperatureMax)}`
   // Feels Like
-  tdTemps.layers.getByName('feels like').artLayers.getByName('feels like 77').textItem.contents = `feels like ${dayData.temperatureApparentMax}`
+  tdTemps.layers.getByName('feels like').layers.getByName('feels like 70').textItem.contents = `feels like ${Math.round(dayData.temperatureApparentMax)}`
 
   // Tonight temp
-  nightLayers.layers.getByName('temp night').artLayers.getByName('53').textItem.contents = nightData.temperatureMin
+  nightLayers.layers.getByName('temp night').layers.getByName('53').textItem.contents = `${Math.round(nightData.temperatureMin)}`
 
   // Today precipitation
-  let dayPrecip = Math.round(dayData.precipitationProbability * 100.0)
-  dayLayers.layers.getByName('% chance').artLayers.getByName('50%').textItem.contents = `${dayPrecip}%`
+  // TODO: Fine tune to the nearest 5%
+  dayLayers.layers.getByName('% chance').layers.getByName('50%').textItem.contents = `${Math.round(dayData.precipitation)}%`
 
   // Tonight precipitation
-  let nightPrecip = Math.round(nightData.precipitationProbability * 100.0)
-  nightLayers.layers.getByName('% chance').artLayers.getByName('10%').textItem.contents = `${nightPrecip}%`
+  nightLayers.layers.getByName('% chance').layers.getByName('10%').textItem.contents = `${Math.round(nightData.precipitation)}%`
 
   // Today wind
   let dayWindLayers = dayLayers.layers.getByName('wind')
   // Today wind speed
-  let windSpeedDay = dayData.windSpeedMax > 5 ? `${dayData.windSpeedMax} - ${dayData.windSpeedMin}` : "Light"
-  dayWindLayers.artLayers.getByName('15 - 25').textItem.contents = windSpeedDay
+  let windSpeedDayText = getWindSpeedText(dayData.windSpeedAvg) || "Unknown"
+  dayWindLayers.layers.getByName('15 - 25').textItem.contents = windSpeedDayText
   // Today wind direction
   // This one is kind of tricky since 355 and 5 are only 10 degrees from each other, but not mathematically.
   // To get around this we are going to compare >45 and < 315.
   let dayWindDirectionDiff = dayData.windDirectionMax - dayData.windDirectionMin
   let dayWindDirection = dayWindDirectionDiff > 45 && dayWindDirectionDiff < 315 ? "Variable" : degreesToDirection(dayData.windDirectionAvg)
-  dayWindLayers.artLayers.getByName('WNW').textItem.contents = degreesToDirection(dayWindDirection)
+  dayWindLayers.layers.getByName('WNW').textItem.contents = degreesToDirection(dayWindDirection)
 
   // Tonight wind
   let nightWindLayers = nightLayers.layers.getByName('wind')
   // Tonight wind speed
-  let windSpeedNight = nightData.windSpeedMax > 5 ? `${nightData.windSpeedMax} - ${nightData.windSpeedMin}` : "Light"
-  nightWindLayers.artLayers.getByName('10 - 20').textItem.contents = windSpeedNight
+  let windSpeedNightText = getWindSpeedText(nightData.windSpeedAvg) || "Unknown"
+  nightWindLayers.layers.getByName('10 - 20').textItem.contents = windSpeedNightText
   // Tonight wind direction
   // This one is kind of tricky since 355 and 5 are only 10 degrees from each other, but not mathematically.
   // To get around this we are going to compare >45 and < 315.
   let nightWindDirectionDiff = nightData.windDirectionMax - nightData.windDirectionMin
   let nightWindDirection = nightWindDirectionDiff > 45 && nightWindDirectionDiff < 315 ? "Variable" : degreesToDirection(nightData.windDirectionAvg)
-  nightWindLayers.artLayers.getByName('NNW').textItem.contents = degreesToDirection(nightWindDirection)
+  nightWindLayers.layers.getByName('NNW').textItem.contents = degreesToDirection(nightWindDirection)
 }
-
-export function setFiveDayData(doc, data) {
+function setFiveDayData(doc, data) {
   if (data.type != "5_day") {
     console.log("Not the 5 day doc... skipping 5 day forecast")
     return

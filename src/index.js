@@ -1,8 +1,5 @@
-import { app } from 'photoshop';
-
-import { fetchForecast, setTodayData, setFiveDayData } from './forecast.js';
-import { fetchTideData, setTideData } from './tides.js';
-import { saveDoc } from './utils.js';
+const app = require('photoshop').app
+const core = require('photoshop').core
 
 let isRunning = false
 
@@ -17,17 +14,17 @@ function setDatePickerDefault() {
 function getFileInfo() {
   var arr = []
   for (var i = 0; i < app.documents.length; i++) {
-    if (app.documents[i].name.toLowerCase().contains('englewood_beach_forecast')) {
+    let docName = app.documents[i].name.toLowerCase()
+    if (docName.includes('englewood_beach_forecast')) {
       arr.push({ documentNum: i, area: 'englewood', type: "tides" })
-    }
-    if (app.documents[i].name.toLowerCase().contains('venice_beach_forecast')) {
+    } else if (docName.includes('venice_beach_forecast')) {
       arr.push({ documentNum: i, area: 'venice', type: "tides" })
-    }
-    if (app.documents[i].name.contains('Glance')) {
+    } else if (docName.includes('today_tonight')) {
       arr.push({ documentNum: i, type: "today" })
-    }
-    if (app.documents[i].name.contains('5_Day')) {
+    } else if (docName.includes('5_day')) {
       arr.push({ documentNum: i, type: "5_day" })
+    } else {
+      console.log(`Not sure what this file is: ${app.documents[i].name}`)
     }
   }
   return arr
@@ -42,13 +39,14 @@ async function getWeatherData(arr) {
   const dataPromises = arr.map(async function(docInfo) {
     let data = {}
     data.documentNum = parseInt(docInfo.documentNum)
+    data.type = docInfo.type
     data.requestedDate = date
 
     if (docInfo.type === "tides") {
       data.tideData = await fetchTideData(docInfo.area, date)
     } else if (docInfo.type === "today")
       data.forecast = forecast
-    else if (doc.type === "5_day") {
+    else if (docInfo.type === "5_day") {
       data.forecast = forecast
     } else {
       alert(`We don't know what happend. docInfo.type: ${docInfo.type}`)
@@ -81,29 +79,37 @@ async function run() {
     alert('Please open psd files with templates')
     return
   }
-  console.log(fileInfo)
 
   const weatherData = await getWeatherData(fileInfo)
-  weatherData.forEach(data => {
-    console.log(data)
-    var doc = app.documents[data.documentNum]
 
-    // Set the active document in Photoshop to the document we are working with
-    app.activeDocument = doc
-    fillData(doc, data)
+  core.executeAsModal(() => {
+    weatherData.forEach(data => {
+      var doc = app.documents[data.documentNum]
 
-    // TODO: Fix this. This is horrendous
-    let name = `${doc.name.split('.')[0]}_${data.date.substring(4, 6)}_${data.date.substring(6, 8)}`
-    saveDoc(doc, name)
+      // Set the active document in Photoshop to the document we are working with
+      app.activeDocument = doc
+      try {
+        fillData(doc, data)
+      } catch (e) {
+        console.log(`The error is\n${e.stack}`)
+      }
+
+      // TODO: Fix this. This is horrendous
+      let name = `${doc.name.split('.')[0]}_${data.date.substring(4, 6)}_${data.date.substring(6, 8)}`
+      saveDoc(doc, name)
+    })
   })
 }
 
 setDatePickerDefault()
-document.querySelector('.submit').addEventListener('click', async () => {
+document.getElementById('submit').addEventListener('click', async () => {
   if (!isRunning) {
     isRunning = true
     try {
-      run()
+      await run()
+    } catch (e) {
+      console.log(e)
+      alert(e)
     } finally {
       isRunning = false
     }
