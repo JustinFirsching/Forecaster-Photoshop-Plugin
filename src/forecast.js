@@ -235,6 +235,7 @@ function setTodayData(doc, data) {
   let nightWindDirection = nightWindDirectionDiff > 45 && nightWindDirectionDiff < 315 ? "Variable" : degreesToDirection(nightData.windDirectionAvg)
   nightWindLayers.layers.getByName('NNW').textItem.contents = degreesToDirection(nightWindDirection)
 }
+
 function setFiveDayData(doc, data) {
   if (data.type != "5_day") {
     console.log("Not the 5 day doc... skipping 5 day forecast")
@@ -312,7 +313,8 @@ function setFiveDayData(doc, data) {
     let layerGroup = dayLayers.layers.getByName("Group 1")
 
     let forecast = data.forecast[i]
-    let [dayData, nightData] = (forecat.day, forecast.night)
+    let dayData = forecast.day
+    let nightData = forecast.night
 
     // Set day of week
     // Day of Week as 3 letter abbreviation
