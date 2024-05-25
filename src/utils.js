@@ -79,6 +79,11 @@ function saveDoc(doc, basename) {
     })
 }
 
+function getDate(dateString) {
+  // This forces exact date instead of converting from UTC
+  return new Date(`${dateString}.`)
+}
+
 function warn(...msg) {
   console.warn(msg)
   alert(msg)
