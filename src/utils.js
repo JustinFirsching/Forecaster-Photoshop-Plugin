@@ -78,3 +78,13 @@ function saveDoc(doc, basename) {
       doc.saveAs(targetFile, saveOptions, true)
     })
 }
+
+function warn(...msg) {
+  console.warn(msg)
+  alert(msg)
+}
+
+function error(...msg) {
+  console.error(msg)
+  alert(msg)
+}

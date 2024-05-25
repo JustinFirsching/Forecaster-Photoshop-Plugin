@@ -91,7 +91,7 @@ async function run() {
       try {
         fillData(doc, data)
       } catch (e) {
-        console.log(`The error is\n${e.stack}`)
+        error(e.stack)
       }
 
       // TODO: Fix this. This is horrendous

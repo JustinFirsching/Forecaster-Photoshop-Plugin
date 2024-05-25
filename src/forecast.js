@@ -175,7 +175,7 @@ function setTodayData(doc, data) {
   }
 
   if (data.forecast == null) {
-    console.error("No forecast data... skipping today/tonight forecast")
+    error("No forecast data... skipping today/tonight forecast")
     return
   }
 
@@ -186,7 +186,7 @@ function setTodayData(doc, data) {
   })[0]
 
   if (todayData == null) {
-    console.error("No today data... skipping today forecast")
+    error("No today data... skipping today forecast")
     return
   }
 
@@ -248,7 +248,7 @@ function setFiveDayData(doc, data) {
   }
 
   if (data.forecast == null) {
-    console.error("No forecast data... skipping 5 day forecast")
+    error("No forecast data... skipping 5 day forecast")
     return
   }
 
@@ -301,12 +301,12 @@ function setFiveDayData(doc, data) {
   })
 
   if (data.forecast == null) {
-    console.error("No data to create 5 day forecast...")
+    warn("No data to create 5 day forecast...")
     return
   }
 
   if (data.forecast.length < 5) {
-    console.warn("Not enough data for a full 5 day forecast... Doing what we can...")
+    warn(`Not enough data for a full 5 day forecast... Doing what we can for a ${data.forecast.length} day forecast.`)
   }
 
   let fiveDayLayers = doc.layers.getByName('5d')

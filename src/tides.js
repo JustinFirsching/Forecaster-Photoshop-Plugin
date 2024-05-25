@@ -98,7 +98,7 @@ async function fetchTideFromStation(station, date) {
       .then(data => processTideData(data.predictions))
       .catch(error => alert('Error fetching data:', error))
   } catch (error) {
-    console.error('Error fetching data:', error);
+    error('Error fetching data:', error);
   }
 }
 
@@ -117,7 +117,7 @@ function setTideData(doc, data) {
   }
   // If we don't have tide data, skip
   if (data.tideData == null) {
-    console.warn('No tide data... skipping tides')
+    warn('No tide data... skipping tides')
     return
   }
 
