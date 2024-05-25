@@ -324,19 +324,19 @@ function setFiveDayData(doc, data) {
     // Set day of week
     // Day of Week as 3 letter abbreviation
     let dayAbbrev = new Date(forecast.date).toDateString().substring(0, 3)
-    layerGroup.artLayers.getByName(layerNames[i].day).textItem.contents = dayAbbrev
+    layerGroup.layers.getByName(layerNames[i].day).textItem.contents = dayAbbrev
 
     // Temp High
     let highTemp = dayData.temperatureMax || "ERR"
-    layerGroup.artLayers.getByName(layerNames[i].tempHigh).textItem.contents = highTemp
+    layerGroup.layers.getByName(layerNames[i].tempHigh).textItem.contents = highTemp
 
     // Temp Low
     let lowTemp = nightData.temperatureMin || "ERR"
-    layerGroup.artLayers.getByName(layerNames[i].tempLow).textItem.contents = lowTemp
+    layerGroup.layers.getByName(layerNames[i].tempLow).textItem.contents = lowTemp
 
     // Precipitation
     let precipitation = dayData != null ? getPrecipitationText(dayData.precipitation) : ""
-    dayLayers.layers.getByName("pop").artLayers.getByName(layerNames[i].precipitation) = precipitation
+    dayLayers.layers.getByName("pop").layers.getByName(layerNames[i].precipitation) = precipitation
 
     // TODO: If possible, do the weather text prediction
     let conditions = "Raining Iguanas"
