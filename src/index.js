@@ -1,7 +1,12 @@
-const app = require('photoshop').app
-const core = require('photoshop').core
+let app = require('photoshop').app
+let core = require('photoshop').core
 
 let isRunning = false
+let forecastTypes = [
+  "today",
+  "5_day",
+  "uv",
+]
 
 // Set the date picker to tomorrow's date
 function setDatePickerDefault() {
@@ -15,14 +20,18 @@ function getFileInfo() {
   var arr = []
   for (var i = 0; i < app.documents.length; i++) {
     let docName = app.documents[i].name.toLowerCase()
-    if (docName.includes('englewood_beach_forecast')) {
-      arr.push({ documentNum: i, area: 'englewood', type: "tides" })
-    } else if (docName.includes('venice_beach_forecast')) {
-      arr.push({ documentNum: i, area: 'venice', type: "tides" })
-    } else if (docName.includes('today_tonight')) {
+    if (docName.includes("englewood_beach_forecast")) {
+      arr.push({ documentNum: i, area: "englewood", type: "tides" })
+    } else if (docName.includes("venice_beach_forecast")) {
+      arr.push({ documentNum: i, area: "venice", type: "tides" })
+    } else if (docName.includes("today_tonight")) {
       arr.push({ documentNum: i, type: "today" })
-    } else if (docName.includes('5_day')) {
+    } else if (docName.includes("5_day")) {
       arr.push({ documentNum: i, type: "5_day" })
+    } else if (docName.includes("uv_index")) {
+      arr.push({ documentNum: i, type: "uv_index" })
+    } else if (docName.includes("allergy_report")) {
+      arr.push({ documentNum: i, type: "allergy_report" })
     } else {
       console.log(`Not sure what this file is: ${app.documents[i].name}`)
     }
@@ -44,12 +53,10 @@ async function getWeatherData(arr) {
 
     if (docInfo.type === "tides") {
       data.tideData = await fetchTideData(docInfo.area, date)
-    } else if (docInfo.type === "today")
-      data.forecast = forecast
-    else if (docInfo.type === "5_day") {
+    } else if (forecastTypes.includes(docInfo.type)) {
       data.forecast = forecast
     } else {
-      alert(`We don't know what happend. docInfo.type: ${docInfo.type}`)
+      error(`Unhandled doc type: ${docInfo.type}`)
     }
     return data
   })
@@ -69,7 +76,8 @@ function fillData(doc, data) {
     case "tide": setTideData(doc, data); break;
     case "today": setTodayData(doc, data); break;
     case "5_day": setFiveDayData(doc, data); break;
-    case "sunrise_sunset": setSunriseSunset(doc, data); break;
+    case "uv": setUvIndexData(doc, data); break;
+    default: error(`Unhandled data type: ${data.type}`)
   }
 }
 

@@ -113,6 +113,9 @@ function processForecastData(data) {
       // For example, 100% chance of rain 2-4 PM and 0% chance of rain the rest of the day would average to 16%.
       // f.day.precipitation = (f.day.precipitation || 0) + forecast.precipitationProbability
       f.day.precipitation = Math.max(forecast.precipitationProbability, f.day.precipitation || 10)
+
+      // UV Index
+      f.day.uvIndex = Math.max(forecast.uvIndex, f.day.uvIndex || 1)
     } else {
       nightCount++
 
@@ -135,6 +138,9 @@ function processForecastData(data) {
       // See above comment in day about averaging
       // f.night.precipitation = (f.night.precipitation || 0) + forecast.precipitationProbability
       f.night.precipitation = Math.max(forecast.precipitationProbability, f.night.precipitation || 10)
+
+      // UV Index
+      f.night.uvIndex = Math.max(forecast.uvIndex, f.night.uvIndex || 1)
     }
   })
 
@@ -341,5 +347,36 @@ function setFiveDayData(doc, data) {
     // TODO: If possible, do the weather text prediction
     let conditions = "Raining Iguanas"
     dayLayers.layers.getByName(layerNames[i].conditions) = conditions
+  }
+}
+
+function setUvIndexData(doc, data) {
+  if (data.type != "uv") {
+    console.log("Not the uv doc... skipping uv")
+    return
+  }
+
+  if (data.forecast == null) {
+    error("No forecast data... skipping uv")
+    return
+  }
+
+  // Filter the data from data.forecast to the item that has a date element with today's date
+  let todayData = data.forecast.filter(function(item) {
+    return new Date(item.date).getDate() === new Date(data.requestedDate).getDate()
+  })[0]
+
+  if (todayData == null) {
+    error("No today data... skipping uv")
+    return
+  }
+
+  let todayString = new Date(today.date).toLocaleDateString("en-US")
+  doc.layers.getByName("upper").layers.getByName("Group 8").layers.getByName("upper").layers.getByName("3/24/2024").textItem.contents = todayString
+
+  let uv = Math.max(todayData.day.uvIndex || 0, todayData.night.uvIndex || 0)
+  for (i = 1; i <= 10; i++) {
+    let visible = i == uv
+    doc.layers.getByName("uvi").layers.getByName(`${i}`).visible = visible
   }
 }
