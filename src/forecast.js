@@ -196,7 +196,8 @@ function setTodayData(doc, data) {
     return
   }
 
-  // TODO: Insert the correct date in %m/%d/%Y format
+  let todayString = new Date(todayData.date).toLocaleDateString("en-US")
+  doc.layers.getByName("upper").layers.getByName("Group 8").layers.getByName("upper").layers.getByName("1/28/2024").textItem.contents = todayString
 
   let dayData = todayData.day
   let nightData = todayData.night
@@ -306,10 +307,13 @@ function setFiveDayData(doc, data) {
     return new Date(item.date) > new Date(data.requestedDate)
   })
 
-  if (data.forecast == null) {
+  if (data.forecast == null || data.forecast.length == 0) {
     warn("No data to create 5 day forecast...")
     return
   }
+
+  let todayString = new Date(data.forecast[0].date).toLocaleDateString("en-US")
+  doc.layers.getByName("upper").layers.getByName("Group 8").layers.getByName("upper").layers.getByName("1/28/2024").textItem.contents = todayString
 
   if (data.forecast.length < 5) {
     warn(`Not enough data for a full 5 day forecast... Doing what we can for a ${data.forecast.length} day forecast.`)
@@ -371,7 +375,7 @@ function setUvIndexData(doc, data) {
     return
   }
 
-  let todayString = new Date(today.date).toLocaleDateString("en-US")
+  let todayString = new Date(todayData.date).toLocaleDateString("en-US")
   doc.layers.getByName("upper").layers.getByName("Group 8").layers.getByName("upper").layers.getByName("3/24/2024").textItem.contents = todayString
 
   let uv = Math.max(todayData.day.uvIndex || 0, todayData.night.uvIndex || 0)
