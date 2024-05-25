@@ -189,7 +189,7 @@ function setTodayData(doc, data) {
   // Break into today and tonight data
   // Filter the data from data.forecast to the item that has a date element with today's date
   let todayData = data.forecast.filter(function(item) {
-    return new Date(item.date).getDate() === getDate(data.requestedDate).getDate()
+    return new Date(item.date).toDateString() === new Date(data.requestedDate).toDateString()
   })[0]
 
   if (todayData == null) {
@@ -305,7 +305,7 @@ function setFiveDayData(doc, data) {
 
   // Filter the data to only forecasts with a date greater than the requested date
   data.forecast = data.forecast.filter(function(item) {
-    return new Date(item.date) > getDate(data.requestedDate)
+    return new Date(item.date) > new Date(data.requestedDate)
   })
 
   if (data.forecast == null || data.forecast.length == 0) {
@@ -368,7 +368,7 @@ function setUvIndexData(doc, data) {
 
   // Filter the data from data.forecast to the item that has a date element with today's date
   let todayData = data.forecast.filter(function(item) {
-    return new Date(item.date).getDate() === getDate(data.requestedDate).getDate()
+    return new Date(item.date).toDateString() === getDate(data.requestedDate).toDateString()
   })[0]
 
   if (todayData == null) {
@@ -384,17 +384,4 @@ function setUvIndexData(doc, data) {
     let visible = i == uv
     doc.layers.getByName("uvi").layers.getByName(`${i}`).visible = visible
   }
-}
-
-function setSunriseSunsetData(doc, data) {
-  if (data.type != "sunrise_sunset") {
-    console.log("Not the sunrise/sunset doc... skipping sunrise/sunset")
-    return
-  }
-
-  if (data.sunrise == null) {
-    error("No sunrise/sunset data... skipping sunrise/sunset")
-    return
-  }
-
 }
