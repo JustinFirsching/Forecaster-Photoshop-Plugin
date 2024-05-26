@@ -1,5 +1,8 @@
 async function fetchSunriseSunset(lat, long, requestedDate) {
   let date = new Date(requestedDate)
+  // Get the next day's data so we can post early
+  date.setDate(date.getDate() + 1)
+
   let dateString = `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}`
   let apiUrl = `https://api.sunrisesunset.io/json?lat=${lat}&lng=${long}&date=${dateString}`
   return await fetch(apiUrl)
@@ -23,6 +26,7 @@ function setSunriseSunsetData(doc, data) {
   let sunset = new Date(`${data.date} ${data.sunset || "00:00:00 AM"}`)
 
   let todayString = sunrise.toLocaleDateString("en-US")
+  // TODO: Try to figure out why this is so big
   doc.layers.getByName("upper").layers.getByName("Group 8").layers.getByName("upper").layers.getByName("Valid 1/29/2024").textItem.contents = `Valid ${todayString}`
 
   let rootLayer = doc.layers.getByName("panels")
