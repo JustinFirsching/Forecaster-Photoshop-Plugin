@@ -27,7 +27,9 @@ function setSunriseSunsetData(doc, data) {
 
   let todayString = sunrise.toLocaleDateString("en-US")
   // TODO: Try to figure out why this is so big
-  doc.layers.getByName("upper").layers.getByName("Group 8").layers.getByName("upper").layers.getByName("Valid 1/29/2024").textItem.contents = `Valid ${todayString}`
+  let dateTextItem = doc.layers.getByName("upper").layers.getByName("Group 8").layers.getByName("upper").layers.getByName("Valid 1/29/2024").textItem
+  dateTextItem.contents = `Valid ${todayString}`
+  dateTextItem.characterStyle.size = 18
 
   let rootLayer = doc.layers.getByName("panels")
   let sunriseString = sunrise.toLocaleTimeString("en-US", {
