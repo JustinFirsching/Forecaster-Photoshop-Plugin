@@ -359,7 +359,7 @@ function setFiveDayData(doc, data) {
 }
 
 function setUvIndexData(doc, data) {
-  if (data.type != "uv") {
+  if (data.type != "uv_index") {
     console.log("Not the uv doc... skipping uv")
     return
   }

@@ -2,7 +2,7 @@ let isRunning = false
 let forecastTypes = [
   "today",
   "5_day",
-  "uv",
+  "uv_index",
 ]
 
 // Set the date picker to tomorrow's date
