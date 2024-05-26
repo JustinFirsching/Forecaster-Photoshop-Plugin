@@ -334,7 +334,7 @@ function setFiveDayData(doc, data) {
 
     // Set day of week
     // Day of Week as 3 letter abbreviation
-    let dayAbbrev = new Date(forecast.date).toDateString().substring(0, 3)
+    let dayAbbrev = new Date(forecast.date).toDateString().substring(0, 3).toUpperCase()
     layerGroup.layers.getByName(layerNames[i].day).textItem.contents = dayAbbrev
 
     // Temp High
