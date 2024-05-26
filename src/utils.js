@@ -53,7 +53,7 @@ function degreesToDirection(degrees) {
 // Save the file
 function saveDoc(doc, basename) {
   // TODO: Maybe a file browser in the Index html to select the folder to save to?
-  let dirname = File(doc.path.absoluteURI).parent.fsName
+  let dirname = doc.path.split('\\').slice(0, -1).join('\\')
 
   let jpegSaveOptions = {
     emdedColorProfile: true,
@@ -74,7 +74,7 @@ function saveDoc(doc, basename) {
       ("png", {}),
       ("psd", psdSaveOptions)
     ).forEach((ext, saveOptions) => {
-      let targetFile = File(path.join(dirname, `${basename}.${ext}`))
+      let targetFile = `${dirname}\\${basename}.${ext}`
       console.log(`Saving file to ${targetFile.fsName}`)
       doc.saveAs(targetFile, saveOptions, true)
     })
