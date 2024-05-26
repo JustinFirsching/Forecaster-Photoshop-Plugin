@@ -347,7 +347,7 @@ function setFiveDayData(doc, data) {
 
     // Precipitation
     let precipitation = dayData != null ? getPrecipitationText(dayData.precipitation) : ""
-    dayLayers.layers.getByName("pop").layers.getByName(layerNames[i].precipitation) = precipitation
+    dayLayers.layers.getByName("pop").layers.getByName(layerNames[i].precipitation).textItem.contents = precipitation
 
     // TODO: If possible, do the weather text prediction
     let conditions = "Raining Iguanas"
