@@ -1,3 +1,5 @@
+const fs = require('uxp').storage.localFileSystem
+
 // Use Date to convert 24 hour time to 12 hour time
 function convertTo12HourFormat(time24) {
   const [hours, minutes] = time24.split(':');
@@ -54,28 +56,6 @@ function degreesToDirection(degrees) {
 function saveDoc(doc, basename) {
   // TODO: Maybe a file browser in the Index html to select the folder to save to?
   let dirname = doc.path.split('\\').slice(0, -1).join('\\')
-
-  let jpegSaveOptions = {
-    emdedColorProfile: true,
-    quality: 12
-  }
-
-  let psdSaveOptions = {
-    alphaChannels: true,
-    annotations: true,
-    embedColorProfile: true,
-    layers: true,
-    spotColors: true
-  }
-
-    // Save all the file formats
-    (
-      ("jpg", jpegSaveOptions),
-      ("png", {}),
-      ("psd", psdSaveOptions)
-    ).forEach((ext, saveOptions) => {
-      let targetFile = `${dirname}\\${basename}.${ext}`
-      console.log(`Saving file to ${targetFile.fsName}`)
-      doc.saveAs(targetFile, saveOptions, true)
-    })
+  let target = fs.getFileForSaving(`${dirname}\\${basename}.jpg`)
+  doc.saveAs.jpg(target, { quality: 12 }, true)
 }
