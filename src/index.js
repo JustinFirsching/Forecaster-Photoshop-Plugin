@@ -75,10 +75,10 @@ function fillData(doc, data) {
   }
 
   switch (data.type) {
-    case "tide": setTideData(doc, data); break;
+    case "tides": setTideData(doc, data); break;
     case "today": setTodayData(doc, data); break;
     case "5_day": setFiveDayData(doc, data); break;
-    case "uv": setUvIndexData(doc, data); break;
+    case "uv_index": setUvIndexData(doc, data); break;
     case "sunrise_sunset": setSunriseSunsetData(doc, data); break;
     default: console.error(`Unhandled data type: ${data.type}`)
   }
