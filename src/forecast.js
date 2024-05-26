@@ -288,9 +288,9 @@ function setFiveDayData(doc, data) {
     // Day 4
     {
       "day": "THU",
-      "tempHigh": "60",
+      "tempHigh": "68",
       "tempLow": "53",
-      "conditions": "Partly Sunny",
+      "conditions": "Partly Cloudy",
       "precipitation": "20%",
     },
     // Day 5
