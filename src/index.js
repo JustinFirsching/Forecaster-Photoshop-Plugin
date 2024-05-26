@@ -61,7 +61,7 @@ async function getWeatherData(arr) {
     } else if (docInfo.type === "sunrise_sunset") {
       data = {...data, ...await fetchSunriseSunset(lat, long, date)}
     } else {
-      error(`Unhandled doc type: ${docInfo.type}`)
+      console.error(`Unhandled doc type: ${docInfo.type}`)
     }
     return data
   })
@@ -83,7 +83,7 @@ function fillData(doc, data) {
     case "5_day": setFiveDayData(doc, data); break;
     case "uv": setUvIndexData(doc, data); break;
     case "sunrise_sunset": setSunriseSunsetData(doc, data); break;
-    default: error(`Unhandled data type: ${data.type}`)
+    default: console.error(`Unhandled data type: ${data.type}`)
   }
 }
 
@@ -105,7 +105,7 @@ async function run() {
       try {
         fillData(doc, data)
       } catch (e) {
-        error(e.stack)
+        console.error(e.stack)
       }
 
       // TODO: Fix this. This is horrendous

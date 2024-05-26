@@ -15,7 +15,7 @@ function setSunriseSunsetData(doc, data) {
   }
 
   if (data.sunrise == null && data.sunset == null) {
-    error("No sunrise or sunset data... skipping sunrise/sunset")
+    console.error("No sunrise or sunset data... skipping sunrise/sunset")
     return
   }
 
