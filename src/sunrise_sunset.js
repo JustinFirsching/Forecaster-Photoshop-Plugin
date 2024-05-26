@@ -38,5 +38,5 @@ function setSunriseSunsetData(doc, data) {
     minute: "numeric",
     hour12: true
   })
-  rootLayer.layers.getByName("down").layers.getByName("6:08 PM").textItem.contents = sunsetString
+  rootLayer.layers.getByName("down").layers.getByName("7:12 AM").textItem.contents = sunsetString
 }
