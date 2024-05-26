@@ -105,13 +105,12 @@ async function run() {
       app.activeDocument = doc
       try {
         fillData(doc, data)
+        // TODO: Fix this. This is horrendous
+        let name = `${doc.name.split('.')[0]}_${data.requestedDate.substring(4, 6)}_${data.requestedDate.substring(6, 8)}`
+        saveDoc(doc, name)
       } catch (e) {
         console.error(e.stack)
       }
-
-      // TODO: Fix this. This is horrendous
-      let name = `${doc.name.split('.')[0]}_${data.date.substring(4, 6)}_${data.date.substring(6, 8)}`
-      saveDoc(doc, name)
     })
   })
 }
