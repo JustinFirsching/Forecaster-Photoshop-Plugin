@@ -1,6 +1,3 @@
-const fs = require('uxp').storage.localFileSystem
-const app = require('photoshop').app
-
 // Use Date to convert 24 hour time to 12 hour time
 function convertTo12HourFormat(time24) {
   const [hours, minutes] = time24.split(':');
@@ -59,7 +56,7 @@ function saveDoc(doc, basename) {
   let dirname = doc.path.split('\\').slice(0, -1).join('\\')
   fs.getFileForSaving(`${basename}.jpg`)
     .then(target =>
-      app.executeAsModal(() =>
+      core.executeAsModal(() =>
         doc.saveAs.jpg(target, { quality: 12 }, true)
       )
     )

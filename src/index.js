@@ -1,6 +1,3 @@
-let app = require('photoshop').app
-let core = require('photoshop').core
-
 let isRunning = false
 let forecastTypes = [
   "today",
