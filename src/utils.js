@@ -10,6 +10,8 @@ function convertTo12HourFormat(time24) {
 }
 
 function degreesToDirection(degrees) {
+  console.log(`[DEBUG] degrees: ${degrees}`)
+
   if (degrees < 0 || degrees > 360) {
     throw new Error('Invalid degrees')
   }
