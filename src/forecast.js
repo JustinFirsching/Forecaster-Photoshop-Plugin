@@ -354,7 +354,7 @@ function setFiveDayData(doc, data) {
 
     // TODO: If possible, do the weather text prediction
     let conditions = "Raining Iguanas"
-    dayLayers.layers.getByName(layerNames[i].conditions) = conditions
+    dayLayers.layers.getByName(layerNames[i].conditions).textItem.contents = conditions
   }
 }
 
