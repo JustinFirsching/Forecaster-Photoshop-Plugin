@@ -106,7 +106,7 @@ async function run() {
       try {
         fillData(doc, data)
         // TODO: Fix this. This is horrendous
-        let name = `${doc.name.split('.')[0]}_${data.requestedDate.substring(4, 6)}_${data.requestedDate.substring(6, 8)}`
+        let name = `${doc.name.split('.')[0]}_${new Date(data.requestedDate).toDateString().replace("/", "-")}`
         saveDoc(doc, name)
       } catch (e) {
         console.error(e.stack)
