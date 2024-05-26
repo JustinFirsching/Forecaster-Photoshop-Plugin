@@ -1,5 +1,3 @@
-import { convertTo12HourFormat } from './utils.js'
-
 const parameters = {
   tideStations: {
     'englewood': {
