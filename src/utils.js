@@ -75,6 +75,7 @@ function saveDoc(doc, basename) {
       ("psd", psdSaveOptions)
     ).forEach((ext, saveOptions) => {
       let targetFile = File(path.join(dirname, `${basename}.${ext}`))
+      console.log(`Saving file to ${targetFile.fsName}`)
       doc.saveAs(targetFile, saveOptions, true)
     })
 }
