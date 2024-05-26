@@ -313,7 +313,10 @@ function setFiveDayData(doc, data) {
     return
   }
 
-  let todayString = new Date(data.forecast[0].date).toLocaleDateString("en-US")
+  let validDate = new Date(data.forecast[0].date)
+  validDate.setDate(validDate.getDate() - 1)
+
+  let todayString = validDate.toLocaleDateString("en-US")
   doc.layers.getByName("upper").layers.getByName("Group 8").layers.getByName("upper").layers.getByName("1/28/2024").textItem.contents = todayString
 
   if (data.forecast.length < 5) {
