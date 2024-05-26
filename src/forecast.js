@@ -371,7 +371,7 @@ function setUvIndexData(doc, data) {
 
   // Filter the data from data.forecast to the item that has a date element with today's date
   let todayData = data.forecast.filter(function(item) {
-    return new Date(item.date).toDateString() === getDate(data.requestedDate).toDateString()
+    return new Date(item.date).toDateString() === new Date(data.requestedDate).toDateString()
   })[0]
 
   if (todayData == null) {
