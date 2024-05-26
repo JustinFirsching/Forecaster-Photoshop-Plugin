@@ -30,8 +30,8 @@ function getFileInfo() {
       arr.push({ documentNum: i, type: "5_day" })
     } else if (docName.includes("uv_index")) {
       arr.push({ documentNum: i, type: "uv_index" })
-    } else if (docName.includes("allergy_report")) {
-      arr.push({ documentNum: i, type: "allergy_report" })
+    } else if (docName.includes("sunrise_sunset")) {
+      arr.push({ documentNum: i, type: "sunrise_sunset" })
     } else {
       console.log(`Not sure what this file is: ${app.documents[i].name}`)
     }
@@ -41,8 +41,11 @@ function getFileInfo() {
 
 async function getWeatherData(arr) {
   const date = document.querySelector('#datepicker').value
-  // Fetch the forecast once and just reuse as needed
   const zip = document.querySelector('#zipcode').value
+  const lat = document.querySelector('#latitude').value
+  const long = document.querySelector('#longitude').value
+
+  // Fetch the forecast once and just reuse as needed
   const forecast = await fetchForecast(zip)
 
   const dataPromises = arr.map(async function(docInfo) {
@@ -55,6 +58,8 @@ async function getWeatherData(arr) {
       data.tideData = await fetchTideData(docInfo.area, date)
     } else if (forecastTypes.includes(docInfo.type)) {
       data.forecast = forecast
+    } else if (docInfo.type === "sunrise_sunset") {
+      data = {...data, ...await fetchSunriseSunset(lat, long, date)}
     } else {
       error(`Unhandled doc type: ${docInfo.type}`)
     }
@@ -77,6 +82,7 @@ function fillData(doc, data) {
     case "today": setTodayData(doc, data); break;
     case "5_day": setFiveDayData(doc, data); break;
     case "uv": setUvIndexData(doc, data); break;
+    case "sunrise_sunset": setSunriseSunsetData(doc, data); break;
     default: error(`Unhandled data type: ${data.type}`)
   }
 }
