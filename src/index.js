@@ -99,6 +99,7 @@ async function run() {
   core.executeAsModal(() => {
     weatherData.forEach(data => {
       var doc = app.documents[data.documentNum]
+      console.log(`Working on ${doc.name}`)
 
       // Set the active document in Photoshop to the document we are working with
       app.activeDocument = doc
