@@ -341,11 +341,11 @@ function setFiveDayData(doc, data) {
     layerGroup.layers.getByName(layerNames[i].day).textItem.contents = dayAbbrev
 
     // Temp High
-    let highTemp = dayData.temperatureMax || "ERR"
+    let highTemp = Math.ceil(dayData.temperatureMax) || "ERR"
     layerGroup.layers.getByName(layerNames[i].tempHigh).textItem.contents = highTemp
 
     // Temp Low
-    let lowTemp = nightData.temperatureMin || "ERR"
+    let lowTemp = Math.floor(nightData.temperatureMin) || "ERR"
     layerGroup.layers.getByName(layerNames[i].tempLow).textItem.contents = lowTemp
 
     // Precipitation
