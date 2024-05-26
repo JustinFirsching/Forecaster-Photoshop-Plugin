@@ -1,5 +1,5 @@
 function getWindSpeedText(averageSpeed) {
-  console.log(`The average speed is ${averageSpeed}`)
+  console.log(`[DEBUG] The average speed is ${averageSpeed}`)
 
   var windSpeedText = "Unknown"
   if (averageSpeed < 5) {
