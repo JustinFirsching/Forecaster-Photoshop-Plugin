@@ -10,7 +10,6 @@ async function fetchSunriseSunset(lat, long, requestedDate) {
     .then(data => data.results)
 }
 
-
 function setSunriseSunsetData(doc, data) {
   if (data.type != "sunrise_sunset") {
     console.log("Not the sunrise/sunset doc... skipping sunrise/sunset")
@@ -29,7 +28,7 @@ function setSunriseSunsetData(doc, data) {
   // TODO: Try to figure out why this is so big
   let dateTextItem = doc.layers.getByName("upper").layers.getByName("Group 8").layers.getByName("upper").layers.getByName("Valid 1/29/2024").textItem
   dateTextItem.contents = `Valid ${todayString}`
-  dateTextItem.characterStyle.size = 75
+  dateTextItem.characterStyle.size = getDateFontSize(doc)
 
   let rootLayer = doc.layers.getByName("panels")
   let sunriseString = sunrise.toLocaleTimeString("en-US", {

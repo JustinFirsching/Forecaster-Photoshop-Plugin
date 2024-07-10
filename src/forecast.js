@@ -198,7 +198,9 @@ function setTodayData(doc, data) {
   }
 
   let todayString = new Date(todayData.date).toLocaleDateString("en-US")
-  doc.layers.getByName("upper").layers.getByName("Group 8").layers.getByName("upper").layers.getByName("1/28/2024").textItem.contents = todayString
+  let dateTextItem = doc.layers.getByName("upper").layers.getByName("Group 8").layers.getByName("upper").layers.getByName("1/28/2024").textItem
+  dateTextItem.contents = todayString
+  dateTextItem.characterStyle.size = getDateFontSize(doc)
 
   let dayData = todayData.day
   let nightData = todayData.night
@@ -317,7 +319,9 @@ function setFiveDayData(doc, data) {
   validDate.setDate(validDate.getDate() - 1)
 
   let todayString = validDate.toLocaleDateString("en-US")
-  doc.layers.getByName("upper").layers.getByName("Group 8").layers.getByName("upper").layers.getByName("1/28/2024").textItem.contents = todayString
+  let dateTextItem = doc.layers.getByName("upper").layers.getByName("Group 8").layers.getByName("upper").layers.getByName("1/28/2024").textItem
+  dateTextItem.contents = todayString
+  dateTextItem.characterStyle.size = getDateFontSize(doc)
 
   if (data.forecast.length < 5) {
     console.warn(`Not enough data for a full 5 day forecast... Doing what we can for a ${data.forecast.length} day forecast.`)

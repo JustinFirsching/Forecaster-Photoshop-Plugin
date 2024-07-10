@@ -64,3 +64,9 @@ function saveDoc(doc, basename) {
     )
     .catch(e => console.error(e))
 }
+
+// Get the date font size as whatever the equivalent of 18pt is
+const DATE_FONT_SIZE = 18
+function getDateFontSize(doc) {
+  return (doc.resolution / 72) * DATE_FONT_SIZE
+}
