@@ -106,7 +106,7 @@ function processForecastData(data) {
       f.day.windSpeedMax = Math.max(forecast.windSpeed, f.day.windSpeedMax || -999)
       f.day.windDirectionMin = Math.min(forecast.windDirection, (f.day.windDirectionMin || 999))
       f.day.windDirectionMax = Math.max(forecast.windDirection, (f.day.windDirectionMax || -999))
-      f.day.windDirectionAvg = (f.day.windDirection || 0) + forecast.windDirection
+      f.day.windDirectionAvg = (f.day.windDirectionAvg || 0) + forecast.windDirection
 
       // Precipitation
       // Averaging doesn't work well, it leads to a lot of 0% hours pulling the chance way down.
@@ -132,7 +132,7 @@ function processForecastData(data) {
       f.night.windSpeedMax = Math.max(forecast.windSpeed, f.night.windSpeedMax || -999)
       f.night.windDirectionMin = Math.min(forecast.windDirection, (f.night.windDirectionMin || 999))
       f.night.windDirectionMax = Math.max(forecast.windDirection, (f.night.windDirectionMax || -999))
-      f.night.windDirectionAvg = (f.night.windDirection || 0) + forecast.windDirection
+      f.night.windDirectionAvg = (f.night.windDirectionAvg || 0) + forecast.windDirection
 
       // Precipitation
       // See above comment in day about averaging
