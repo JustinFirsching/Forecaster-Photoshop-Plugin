@@ -14,45 +14,48 @@ const parameters = {
     }
   }
 }
+
 function processTideData(data) {
   let lowTide = { top: null, bot: null, top_time: null, bot_time: null };
   let highTide = { top: null, bot: null, top_time: null, bot_time: null };
 
-  for (const entry of data) {
-    const currentNum = parseFloat(entry.v).toFixed(1)
-    const timeString = entry.t.split(' ')[1]
-    //low tide
-    if (entry.type === 'L') {
-      if (lowTide.top == null) {
-        lowTide.top = currentNum
-        lowTide.top_time = timeString;
-      } else {
-        if (lowTide.top <= currentNum) {
-          lowTide.bot = currentNum
-          lowTide.bot_time = timeString
-        } else {
-          lowTide.bot = lowTide.top
+  if(data != undefined) {
+    for (const entry of data) {
+      const currentNum = parseFloat(entry.v).toFixed(1)
+      const timeString = entry.t.split(' ')[1]
+      //low tide
+      if (entry.type === 'L') {
+        if (lowTide.top == null) {
           lowTide.top = currentNum
-          lowTide.bot_time = lowTide.top_time
-          lowTide.top_time = timeString
+          lowTide.top_time = timeString;
+        } else {
+          if (lowTide.top <= currentNum) {
+            lowTide.bot = currentNum
+            lowTide.bot_time = timeString
+          } else {
+            lowTide.bot = lowTide.top
+            lowTide.top = currentNum
+            lowTide.bot_time = lowTide.top_time
+            lowTide.top_time = timeString
+          }
         }
       }
-    }
 
-    //high tide
-    if (entry.type === 'H') {
-      if (highTide.top == null) {
-        highTide.top = currentNum
-        highTide.top_time = timeString
-      } else {
-        if (highTide.top <= currentNum) {
-          highTide.bot = currentNum
-          highTide.bot_time = timeString
-        } else {
-          highTide.bot = highTide.top
+      //high tide
+      if (entry.type === 'H') {
+        if (highTide.top == null) {
           highTide.top = currentNum
-          highTide.bot_time = highTide.top_time
           highTide.top_time = timeString
+        } else {
+          if (highTide.top <= currentNum) {
+            highTide.bot = currentNum
+            highTide.bot_time = timeString
+          } else {
+            highTide.bot = highTide.top
+            highTide.top = currentNum
+            highTide.bot_time = highTide.top_time
+            highTide.top_time = timeString
+          }
         }
       }
     }
