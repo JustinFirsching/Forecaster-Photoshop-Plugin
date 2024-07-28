@@ -70,7 +70,7 @@ async function getWeatherData(arr) {
 // Fill the data into the PSD
 function fillData(doc, data) {
   if (data == null) {
-    alert('No data!')
+    app.showAlert('No data!')
     return
   }
 
@@ -87,7 +87,7 @@ function fillData(doc, data) {
 async function run() {
   let fileInfo = getFileInfo()
   if (fileInfo.length == 0) {
-    alert('Please open psd files with templates')
+    app.showAlert('Please open psd files with templates')
     return
   }
 
@@ -120,7 +120,7 @@ document.getElementById('submit').addEventListener('click', async () => {
       await run()
     } catch (e) {
       console.log(e)
-      alert(e)
+      app.showAlert(e)
     } finally {
       isRunning = false
     }
