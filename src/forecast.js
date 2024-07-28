@@ -213,12 +213,15 @@ function setTodayData(doc, data) {
   // Today temp
   let tdTemps = dayLayers.layers.getByName('temps')
   // Actual
-  tdTemps.layers.getByName('temp day').layers.getByName('70').textItem.contents = `${Math.round(dayData.temperatureMax)}`
+  let highTempOffset = Number(document.getElementById('highTempModifier').value)
+  tdTemps.layers.getByName('temp day').layers.getByName('70').textItem.contents = `${Math.round(dayData.temperatureMax) + highTempOffset}`
   // Feels Like
-  tdTemps.layers.getByName('feels like').layers.getByName('feels like 70').textItem.contents = `feels like ${Math.round(dayData.temperatureApparentMax)}`
+  let apparentTempOffset = Number(document.getElementById('apparentTempModifier').value)
+  tdTemps.layers.getByName('feels like').layers.getByName('feels like 70').textItem.contents = `feels like ${Math.round(dayData.temperatureApparentMax) + apparentTempOffset}`
 
   // Tonight temp
-  nightLayers.layers.getByName('temp night').layers.getByName('53').textItem.contents = `${Math.round(nightData.temperatureMin)}`
+  let lowTempOffset = Number(document.getElementById('lowTempModifier').value)
+  nightLayers.layers.getByName('temp night').layers.getByName('53').textItem.contents = `${Math.round(nightData.temperatureMin) + lowTempOffset}`
 
   // Today precipitation
   dayLayers.layers.getByName('% chance').layers.getByName('50%').textItem.contents = getPrecipitationText(dayData.precipitation)
@@ -345,11 +348,13 @@ function setFiveDayData(doc, data) {
     layerGroup.layers.getByName(layerNames[i].day).textItem.contents = dayAbbrev
 
     // Temp High
-    let highTemp = Math.ceil(dayData.temperatureMax) || "ERR"
+    let highTempOffset = Number(document.getElementById('highTempModifier').value) || 0
+    let highTemp = Math.ceil(dayData.temperatureMax) + highTempOffset || "ERR"
     layerGroup.layers.getByName(layerNames[i].tempHigh).textItem.contents = highTemp
 
     // Temp Low
-    let lowTemp = Math.floor(nightData.temperatureMin) || "ERR"
+    let lowTempOffset = Number(document.getElementById('lowTempModifier').value) || 0
+    let lowTemp = Math.floor(nightData.temperatureMin) + lowTempOffset || "ERR"
     layerGroup.layers.getByName(layerNames[i].tempLow).textItem.contents = lowTemp
 
     // Precipitation

@@ -14,16 +14,26 @@
 
 <body>
     <sp-heading>Forecaster Plugin</sp-heading>
-    <div class="container">
-        Forecast Date: <input type="date" id="datepicker" value="" />
-    </div>
-    <div class="container">
-        Zip Code: <input type="number" id="zipcode" value="34292" />
-    </div>
-    <div class="container">
-        Latitude: <input type="number" id="latitude" value="27.06" />
-        Longitude: <input type="number" id="longitude" value="-82.27" />
-    </div>
+    <sp-body>
+        <div class="container">
+            Forecast Date: <input type="date" id="datepicker" value="" />
+        </div>
+        <div class="container">
+            Zip Code: <input type="number" id="zipcode" value="34292" />
+        </div>
+        <div class="container">
+            Latitude: <input type="number" id="latitude" value="27.06" />
+            Longitude: <input type="number" id="longitude" value="-82.27" />
+        </div>
+        <div class="container">
+            <!-- Actual temperature -->
+            Low Temperature Modifier: <input type="number" id="lowTempModifier" value="0" />
+            High Temperature Modifier: <input type="number" id="highTempModifier" value="0" />
+
+            <!-- Apparent temperature -->
+            Apparent Temperature Modifier: <input type="number" id="apparentTempModifier" value="0" />
+        </div>
+    </sp-body>
     <footer>
         <sp-button id="submit">Submit</sp-button>
     </footer>
