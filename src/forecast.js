@@ -39,7 +39,7 @@ const getPrecipitationText = (precipitation) =>
 // If the time is between 8 PM and 8 AM the day after, save `windGustAvg` value to f.nightGustAvg
 // When we hit 8 AM the next day, push f to forecasts, and reset f to an empty object
 // Return the forecasts array
-function processForecastData(data) {
+function processForecastDataTomorrowIO(data) {
   if (data.length == 0) {
     return []
   }
@@ -168,11 +168,11 @@ function processForecastData(data) {
   return forecasts
 }
 
-async function fetchForecast(zipcode) {
-  let apiUrl = `https://api.tomorrow.io/v4/weather/forecast?location=${zipcode}%20US&units=imperial&timesteps=1h&apikey=${API_KEY_TOMORROW_IO}`
+async function fetchForecastTomorrowIO(zipcode, apiKey) {
+  let apiUrl = `https://api.tomorrow.io/v4/weather/forecast?location=${zipcode}%20US&units=imperial&timesteps=1h&apikey=${apiKey}`
   return await fetch(apiUrl)
     .then(response => response.json())
-    .then(data => processForecastData(data.timelines.hourly))
+    .then(data => processForecastDataTomorrowIO(data.timelines.hourly))
 }
 
 function setTodayData(doc, data) {

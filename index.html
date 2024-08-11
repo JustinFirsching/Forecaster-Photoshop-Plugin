@@ -2,8 +2,8 @@
 <html>
 
 <head>
-    <script src="src/const.js"></script>
     <script src="src/imports.js"></script>
+    <script src="src/keys.js"></script>
     <script src="src/utils.js"></script>
     <script src="src/forecast.js"></script>
     <script src="src/sunrise_sunset.js"></script>
@@ -15,6 +15,10 @@
 <body>
     <sp-heading>Forecaster Plugin</sp-heading>
     <sp-body>
+        <div class="container">
+            <!-- API Keys as input -->
+            TomorrowIO API Key: <input id="tomorrowIoApiKey" value="" />
+        </div>
         <div class="container">
             Forecast Date: <input type="date" id="datepicker" value="" />
         </div>

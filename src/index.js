@@ -12,6 +12,11 @@ function setDatePickerDefault() {
   document.getElementById('datepicker').value = tomorrow.toLocaleDateString('en-US')
 }
 
+// Set the API Keys
+function setApiKeyDefaults() {
+  document.getElementById('tomorrowIoApiKey').value = DEFAULT_API_KEY_TOMORROW_IO
+}
+
 // This sets the file info so the rest of the script knows what data to fetch
 function getFileInfo() {
   var arr = []
@@ -42,8 +47,10 @@ async function getWeatherData(arr) {
   const lat = document.querySelector('#latitude').value
   const long = document.querySelector('#longitude').value
 
+  let api_key_tomorrow_io = document.getElementById('tomorrowIoApiKey').value
+
   // Fetch the forecast once and just reuse as needed
-  const forecast = await fetchForecast(zip)
+  const forecast = await fetchForecastTomorrowIO(zip, api_key_tomorrow_io)
 
   const dataPromises = arr.map(async function(docInfo) {
     let data = {}
@@ -113,6 +120,7 @@ async function run() {
 }
 
 setDatePickerDefault()
+setApiKeyDefaults()
 document.getElementById('submit').addEventListener('click', async () => {
   if (!isRunning) {
     isRunning = true
