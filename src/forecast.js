@@ -168,11 +168,149 @@ function processForecastDataTomorrowIO(data) {
   return forecasts
 }
 
+function processForecastDataVisualCrossing(data) {
+  if (data.length == 0) {
+    return []
+  }
+
+  let forecasts = []
+
+  let d1 = new Date(data[0].datetimeEpoch * 1000)
+  var f = {
+    date: d1.toLocaleDateString('en-US'),
+    day: {},
+    night: {},
+  }
+
+  var dayCount = 0
+  var nightCount = 0
+
+  // Concatenate all of the hourly data points
+  let hourlyDataPoints = data.flatMap(day => day.hours)
+
+  hourlyDataPoints.forEach(forecast => {
+    const time = new Date(forecast.datetimeEpoch * 1000)
+    const hour = time.getHours()
+
+    if (hour === 8 && (dayCount > 0 || nightCount > 0)) {
+      // Post process forecast data
+      // Day
+      if (dayCount > 0) {
+        f.day.temperatureAvg /= dayCount
+        f.day.temperatureApparentAvg /= dayCount
+        f.day.windSpeedAvg /= dayCount
+        f.day.windDirectionAvg /= dayCount
+      }
+      // Night
+      if (nightCount > 0) {
+        f.night.temperatureAvg /= nightCount
+        f.night.temperatureApparentAvg /= nightCount
+        f.night.windSpeedAvg /= nightCount
+        f.night.windDirectionAvg /= nightCount
+      }
+
+      forecasts.push(f)
+
+      // Reset
+      f = {
+        date: time.toLocaleDateString('en-US'),
+        day: {},
+        night: {}
+      }
+      dayCount = 0
+      nightCount = 0
+    }
+
+    if (hour >= 8 && hour < 20) {
+      dayCount++
+
+      // Temperature
+      f.day.temperatureAvg = (f.day.temperature || 0) + forecast.temp
+      f.day.temperatureApparentAvg = (f.day.temperatureApparent || 0) + forecast.feelslike
+      f.day.temperatureMin = Math.min(forecast.temp, f.day.temperatureMin || 999)
+      f.day.temperatureMax = Math.max(forecast.temp, f.day.temperatureMax || -999)
+      f.day.temperatureApparentMax = Math.max(forecast.feelslikemax, f.day.temperatureApparentMax || -999)
+
+      // Wind
+      f.day.windSpeedAvg = (f.day.windSpeedAvg || 0) + forecast.windspeed
+      f.day.windSpeedMin = Math.min(forecast.windspeed, f.day.windSpeedMin || 999)
+      f.day.windSpeedMax = Math.max(forecast.windspeed, f.day.windSpeedMax || -999)
+      f.day.windDirectionMin = Math.min(forecast.winddir, (f.day.windDirectionMin || 999))
+      f.day.windDirectionMax = Math.max(forecast.winddir, (f.day.windDirectionMax || -999))
+      f.day.windDirectionAvg = (f.day.windDirectionAvg || 0) + forecast.winddir
+
+      // Precipitation
+      // Averaging doesn't work well, it leads to a lot of 0% hours pulling the chance way down.
+      // For example, 100% chance of rain 2-4 PM and 0% chance of rain the rest of the day would average to 16%.
+      // f.day.precipitation = (f.day.precipitation || 0) + forecast.precipitationProbability
+      f.day.precipitation = Math.max(forecast.precipprob, f.day.precipitation || 10)
+
+      // UV Index
+      f.day.uvIndex = Math.max(forecast.uvindex, f.day.uvIndex || 1)
+    } else {
+      nightCount++
+
+      // Temperature
+      f.night.temperatureAvg = (f.night.temperature || 0) + forecast.temp
+      f.night.temperatureApparentAvg = (f.night.temperatureApparent || 0) + forecast.feelslike
+      f.night.temperatureMin = Math.min(forecast.temp, f.night.temperatureMin || 999)
+      f.night.temperatureMax = Math.max(forecast.temp, f.night.temperatureMax || -999)
+      f.night.temperatureApparentMax = Math.max(forecast.feelslike, f.night.temperatureApparentMax || -999)
+
+      // Wind
+      f.night.windSpeedAvg = (f.night.windSpeedAvg || 0) + forecast.windspeed
+      f.night.windSpeedMin = Math.min(forecast.windspeed, f.night.windSpeedMin || 999)
+      f.night.windSpeedMax = Math.max(forecast.windspeed, f.night.windSpeedMax || -999)
+      f.night.windDirectionMin = Math.min(forecast.winddir, (f.night.windDirectionMin || 999))
+      f.night.windDirectionMax = Math.max(forecast.winddir, (f.night.windDirectionMax || -999))
+      f.night.windDirectionAvg = (f.night.windDirectionAvg || 0) + forecast.winddir
+
+      // Precipitation
+      // See above comment in day about averaging
+      // f.night.precipitation = (f.night.precipitation || 0) + forecast.precipitationProbability
+      f.night.precipitation = Math.max(forecast.precipprob, f.night.precipitation || 10)
+
+      // UV Index
+      f.night.uvIndex = Math.max(forecast.uvindex, f.night.uvIndex || 1)
+    }
+  })
+
+  // Don't forget about the one we didn't complete
+  if (dayCount > 0 || nightCount > 0) {
+    // Post process forecast data
+    // Day
+    if (dayCount > 0) {
+      f.day.temperatureAvg /= dayCount
+      f.day.temperatureApparentAvg /= dayCount
+      f.day.windSpeedAvg /= dayCount
+      f.day.windDirectionAvg /= dayCount
+    }
+    // Night
+    if (nightCount > 0) {
+      f.night.temperatureAvg /= nightCount
+      f.night.temperatureApparentAvg /= nightCount
+      f.night.windSpeedAvg /= nightCount
+      f.night.windDirectionAvg /= nightCount
+    }
+
+    forecasts.push(f)
+  }
+
+  return forecasts
+}
+
 async function fetchForecastTomorrowIO(zipcode, apiKey) {
   let apiUrl = `https://api.tomorrow.io/v4/weather/forecast?location=${zipcode}%20US&units=imperial&timesteps=1h&apikey=${apiKey}`
   return await fetch(apiUrl)
     .then(response => response.json())
     .then(data => processForecastDataTomorrowIO(data.timelines.hourly))
+}
+
+async function fetchForecastVisualCrossing(zipcode, apiKey) {
+  let apiUrl = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${zipcode}?unitGroup=us&include=days,hours&key=${apiKey}`
+  return await fetch(apiUrl)
+    .then(response => response.json())
+    .then(data => processForecastDataVisualCrossing(data.days))
 }
 
 function setTodayData(doc, data) {
@@ -200,7 +338,7 @@ function setTodayData(doc, data) {
   let todayString = new Date(todayData.date).toLocaleDateString("en-US")
   let dateTextItem = doc.layers.getByName("upper").layers.getByName("Group 8").layers.getByName("upper").layers.getByName("1/28/2024").textItem
   dateTextItem.contents = todayString
-  dateTextItem.characterStyle.size = getDateFontSize(doc)
+  dateTextItem.characterStyle.size = getFontSize(doc, 'date')
 
   let dayData = todayData.day
   let nightData = todayData.night
@@ -213,45 +351,68 @@ function setTodayData(doc, data) {
   // Today temp
   let tdTemps = dayLayers.layers.getByName('temps')
   // Actual
-  let highTempOffset = Number(document.getElementById('highTempModifier').value)
-  tdTemps.layers.getByName('temp day').layers.getByName('70').textItem.contents = `${Math.round(dayData.temperatureMax) + highTempOffset}`
+  let highTempOffset = +document.getElementById('highTempModifier').value
+  let highTempTextItem = tdTemps.layers.getByName('temp day').layers.getByName('70').textItem
+  highTempTextItem.contents = `${Math.round(dayData.temperatureMax) + highTempOffset}`
+  highTempTextItem.characterStyle.size = getFontSize(doc, 'today_temp')
+
   // Feels Like
-  let apparentTempOffset = Number(document.getElementById('apparentTempModifier').value)
-  tdTemps.layers.getByName('feels like').layers.getByName('feels like 70').textItem.contents = `feels like ${Math.round(dayData.temperatureApparentMax) + apparentTempOffset}`
+  let apparentTempOffset = +document.getElementById('apparentTempModifier').value
+  let feelsLikeTempTextItem = tdTemps.layers.getByName('feels like').layers.getByName('feels like 70').textItem
+  feelsLikeTempTextItem.contents = `feels like ${Math.round(dayData.temperatureApparentMax) + apparentTempOffset}`
+  feelsLikeTempTextItem.characterStyle.size = getFontSize(doc, 'apparent_temp')
 
   // Tonight temp
-  let lowTempOffset = Number(document.getElementById('lowTempModifier').value)
-  nightLayers.layers.getByName('temp night').layers.getByName('53').textItem.contents = `${Math.round(nightData.temperatureMin) + lowTempOffset}`
+  let lowTempOffset = +document.getElementById('lowTempModifier').value
+  let lowTempTextItem = nightLayers.layers.getByName('temp night').layers.getByName('53').textItem
+  lowTempTextItem.contents = `${Math.round(nightData.temperatureMin) + lowTempOffset}`
+  lowTempTextItem.characterStyle.size = getFontSize(doc, 'today_temp')
 
   // Today precipitation
-  dayLayers.layers.getByName('% chance').layers.getByName('50%').textItem.contents = getPrecipitationText(dayData.precipitation)
+  let dayPrecipitationTextItem = dayLayers.layers.getByName('% chance').layers.getByName('50%').textItem
+  dayPrecipitationTextItem.contents = getPrecipitationText(dayData.precipitation)
+  dayPrecipitationTextItem.characterStyle.size = getFontSize(doc, 'today_precip')
 
   // Tonight precipitation
-  nightLayers.layers.getByName('% chance').layers.getByName('10%').textItem.contents = getPrecipitationText(nightData.precipitation)
+  let nightPrecipitationTextItem = nightLayers.layers.getByName('% chance').layers.getByName('10%').textItem
+  nightPrecipitationTextItem.contents = getPrecipitationText(nightData.precipitation)
+  nightPrecipitationTextItem.characterStyle.size = getFontSize(doc, 'today_precip') // TODO: This
 
   // Today wind
   let dayWindLayers = dayLayers.layers.getByName('wind')
+
   // Today wind speed
   let windSpeedDayText = getWindSpeedText(dayData.windSpeedAvg) || "Unknown"
-  dayWindLayers.layers.getByName('15 - 25').textItem.contents = windSpeedDayText
+  let dayWindSpeedTextItem = dayWindLayers.layers.getByName('15 - 25').textItem
+  dayWindSpeedTextItem.contents = windSpeedDayText
+  dayWindSpeedTextItem.characterStyle.size = getFontSize(doc, 'wind_speed')
+
   // Today wind direction
   // This one is kind of tricky since 355 and 5 are only 10 degrees from each other, but not mathematically.
   // To get around this we are going to compare >45 and < 315.
   let dayWindDirectionDiff = dayData.windDirectionMax - dayData.windDirectionMin
   let dayWindDirection = dayWindDirectionDiff > 45 && dayWindDirectionDiff < 315 ? "Variable" : degreesToDirection(dayData.windDirectionAvg)
-  dayWindLayers.layers.getByName('WNW').textItem.contents = degreesToDirection(dayWindDirection)
+  let windDirectionTextItem = dayWindLayers.layers.getByName('WNW').textItem
+  windDirectionTextItem.contents = degreesToDirection(dayWindDirection)
+  windDirectionTextItem.characterStyle.size = getFontSize(doc, 'wind_direction')
 
   // Tonight wind
   let nightWindLayers = nightLayers.layers.getByName('wind')
+
   // Tonight wind speed
   let windSpeedNightText = getWindSpeedText(nightData.windSpeedAvg) || "Unknown"
-  nightWindLayers.layers.getByName('10 - 20').textItem.contents = windSpeedNightText
+  let nightWindSpeedTextItem = nightWindLayers.layers.getByName('10 - 20').textItem
+  nightWindSpeedTextItem.contents = windSpeedNightText
+  nightWindSpeedTextItem.characterStyle.size = getFontSize(doc, 'wind_speed')
+
   // Tonight wind direction
   // This one is kind of tricky since 355 and 5 are only 10 degrees from each other, but not mathematically.
   // To get around this we are going to compare >45 and < 315.
   let nightWindDirectionDiff = nightData.windDirectionMax - nightData.windDirectionMin
   let nightWindDirection = nightWindDirectionDiff > 45 && nightWindDirectionDiff < 315 ? "Variable" : degreesToDirection(nightData.windDirectionAvg)
-  nightWindLayers.layers.getByName('NNW').textItem.contents = degreesToDirection(nightWindDirection)
+  let nightWindDirectionTextItem = nightWindLayers.layers.getByName('NNW').textItem
+  nightWindDirectionTextItem.contents = degreesToDirection(nightWindDirection)
+  nightWindDirectionTextItem.characterStyle.size = getFontSize(doc, 'wind_direction')
 }
 
 function setFiveDayData(doc, data) {
@@ -324,7 +485,7 @@ function setFiveDayData(doc, data) {
   let todayString = validDate.toLocaleDateString("en-US")
   let dateTextItem = doc.layers.getByName("upper").layers.getByName("Group 8").layers.getByName("upper").layers.getByName("1/28/2024").textItem
   dateTextItem.contents = todayString
-  dateTextItem.characterStyle.size = getDateFontSize(doc)
+  dateTextItem.characterStyle.size = getFontSize(doc, 'date')
 
   if (data.forecast.length < 5) {
     console.warn(`Not enough data for a full 5 day forecast... Doing what we can for a ${data.forecast.length} day forecast.`)
@@ -345,21 +506,29 @@ function setFiveDayData(doc, data) {
     // Set day of week
     // Day of Week as 3 letter abbreviation
     let dayAbbrev = new Date(forecast.date).toDateString().substring(0, 3).toUpperCase()
-    layerGroup.layers.getByName(layerNames[i].day).textItem.contents = dayAbbrev
+    let dayAbbrevTextItem = layerGroup.layers.getByName(layerNames[i].day).textItem
+    dayAbbrevTextItem.contents = dayAbbrev
+    dayAbbrevTextItem.characterStyle.size = getFontSize(doc, 'day')
 
     // Temp High
     let highTempOffset = Number(document.getElementById('highTempModifier').value) || 0
     let highTemp = Math.ceil(dayData.temperatureMax) + highTempOffset || "ERR"
-    layerGroup.layers.getByName(layerNames[i].tempHigh).textItem.contents = highTemp
+    let highTempTextItem = layerGroup.layers.getByName(layerNames[i].tempHigh).textItem
+    highTempTextItem.contents = highTemp
+    highTempTextItem.characterStyle.size = getFontSize(doc, 'high_temp')
 
     // Temp Low
     let lowTempOffset = Number(document.getElementById('lowTempModifier').value) || 0
     let lowTemp = Math.floor(nightData.temperatureMin) + lowTempOffset || "ERR"
-    layerGroup.layers.getByName(layerNames[i].tempLow).textItem.contents = lowTemp
+    let lowTempTextItem = layerGroup.layers.getByName(layerNames[i].tempLow).textItem
+    lowTempTextItem.contents = lowTemp
+    lowTempTextItem.characterStyle.size = getFontSize(doc, 'low_temp')
 
     // Precipitation
     let precipitation = dayData != null ? getPrecipitationText(dayData.precipitation) : ""
-    dayLayers.layers.getByName("pop").layers.getByName(layerNames[i].precipitation).textItem.contents = precipitation
+    let precipitationTextItem = dayLayers.layers.getByName("pop").layers.getByName(layerNames[i].precipitation).textItem
+    precipitationTextItem.contents = precipitation
+    precipitationTextItem.characterStyle.size = getFontSize(doc, 'precipitation')
 
     // TODO: If possible, do the weather text prediction
     // let conditions = "Raining Iguanas"

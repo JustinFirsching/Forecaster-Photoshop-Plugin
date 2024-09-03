@@ -55,7 +55,6 @@ function degreesToDirection(degrees) {
 // Save the file
 function saveDoc(doc, basename) {
   // TODO: Maybe a file browser in the Index html to select the folder to save to?
-  let dirname = doc.path.split('\\').slice(0, -1).join('\\')
   fs.getFileForSaving(`${basename}.jpg`)
     .then(target =>
       core.executeAsModal(() =>
@@ -65,8 +64,20 @@ function saveDoc(doc, basename) {
     .catch(e => console.error(e))
 }
 
-// Get the date font size as whatever the equivalent of 18pt is
-const DATE_FONT_SIZE = 18
-function getDateFontSize(doc) {
-  return (doc.resolution / 72) * DATE_FONT_SIZE
+let FONT_SIZES = {
+  apparent_temp: 6,
+  condition: 8,
+  date: 18,
+  day: 24,
+  high_temp: 28,
+  low_temp: 20,
+  precipitation: 6, // TODO: Verify
+  today_precip: 10,
+  today_temp: 28,
+  wind_direction: 7,
+  wind_speed: 10,
+}
+
+function getFontSize(doc, section) {
+  return (doc.resolution / 72) * FONT_SIZES[section]
 }

@@ -48,11 +48,15 @@ async function getWeatherData(arr) {
   const long = document.querySelector('#longitude').value
 
   let api_key_tomorrow_io = document.getElementById('tomorrowIoApiKey').value
+  let api_key_visual_crossing = document.getElementById('visualCrossingApiKey').value
 
   // Fetch the forecast once and just reuse as needed
-  const forecast = await fetchForecastTomorrowIO(zip, api_key_tomorrow_io)
+  let forecaster = document.getElementById('forecaster').value
+  let forecast = (forecaster.toLowerCase().trim() == "tomorrowio") ?
+    await fetchForecastTomorrowIO(zip, api_key_tomorrow_io) :
+    await fetchForecastVisualCrossing(zip, api_key_visual_crossing)
 
-  const dataPromises = arr.map(async function(docInfo) {
+  let dataPromises = arr.map(async function(docInfo) {
     let data = {}
     data.documentNum = parseInt(docInfo.documentNum)
     data.type = docInfo.type
@@ -61,6 +65,7 @@ async function getWeatherData(arr) {
     if (docInfo.type === "tides") {
       data.tideData = await fetchTideData(docInfo.area, date)
     } else if (forecastTypes.includes(docInfo.type)) {
+      data.forecaster = forecaster
       data.forecast = forecast
     } else if (docInfo.type === "sunrise_sunset") {
       data = {...data, ...await fetchSunriseSunset(lat, long, date)}
@@ -70,8 +75,7 @@ async function getWeatherData(arr) {
     return data
   })
 
-  const params = await Promise.all(dataPromises);
-  return params;
+  return await Promise.all(dataPromises);
 }
 
 // Fill the data into the PSD
