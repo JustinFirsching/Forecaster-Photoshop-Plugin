@@ -391,9 +391,8 @@ function setTodayData(doc, data) {
   // This one is kind of tricky since 355 and 5 are only 10 degrees from each other, but not mathematically.
   // To get around this we are going to compare >45 and < 315.
   let dayWindDirectionDiff = dayData.windDirectionMax - dayData.windDirectionMin
-  let dayWindDirection = dayWindDirectionDiff > 45 && dayWindDirectionDiff < 315 ? "Variable" : degreesToDirection(dayData.windDirectionAvg)
   let windDirectionTextItem = dayWindLayers.layers.getByName('WNW').textItem
-  windDirectionTextItem.contents = degreesToDirection(dayWindDirection)
+  windDirectionTextItem.contents = dayWindDirectionDiff > 45 && dayWindDirectionDiff < 315 ? "Variable" : degreesToDirection(dayData.windDirectionAvg)
   windDirectionTextItem.characterStyle.size = getFontSize(doc, 'wind_direction')
 
   // Tonight wind
@@ -409,9 +408,8 @@ function setTodayData(doc, data) {
   // This one is kind of tricky since 355 and 5 are only 10 degrees from each other, but not mathematically.
   // To get around this we are going to compare >45 and < 315.
   let nightWindDirectionDiff = nightData.windDirectionMax - nightData.windDirectionMin
-  let nightWindDirection = nightWindDirectionDiff > 45 && nightWindDirectionDiff < 315 ? "Variable" : degreesToDirection(nightData.windDirectionAvg)
   let nightWindDirectionTextItem = nightWindLayers.layers.getByName('NNW').textItem
-  nightWindDirectionTextItem.contents = degreesToDirection(nightWindDirection)
+  nightWindDirectionTextItem.contents = nightWindDirectionDiff > 45 && nightWindDirectionDiff < 315 ? "Variable" : degreesToDirection(nightData.windDirectionAvg)
   nightWindDirectionTextItem.characterStyle.size = getFontSize(doc, 'wind_direction')
 }
 
