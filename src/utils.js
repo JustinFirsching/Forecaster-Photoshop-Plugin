@@ -71,7 +71,7 @@ let FONT_SIZES = {
   day: 24,
   high_temp: 28,
   low_temp: 20,
-  precipitation: 6, // TODO: Verify
+  precipitation: 6,
   today_precip: 10,
   today_temp: 28,
   wind_direction: 7,

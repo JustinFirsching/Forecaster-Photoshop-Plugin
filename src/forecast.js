@@ -391,7 +391,7 @@ function setTodayData(doc, data) {
   // Tonight precipitation
   let nightPrecipitationTextItem = nightLayers.layers.getByName('% chance').layers.getByName('10%').textItem
   nightPrecipitationTextItem.contents = getPrecipitationText(nightData.precipitation)
-  nightPrecipitationTextItem.characterStyle.size = getFontSize(doc, 'today_precip') // TODO: This
+  nightPrecipitationTextItem.characterStyle.size = getFontSize(doc, 'today_precip')
 
   // Today wind
   let dayWindLayers = dayLayers.layers.getByName('wind')
