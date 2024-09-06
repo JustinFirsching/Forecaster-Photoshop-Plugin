@@ -15,6 +15,7 @@ function setDatePickerDefault() {
 // Set the API Keys
 function setApiKeyDefaults() {
   document.getElementById('tomorrowIoApiKey').value = DEFAULT_API_KEY_TOMORROW_IO
+  document.getElementById('visualCrossingApiKey').value = DEFAULT_API_KEY_VISUAL_CROSSING
 }
 
 // This sets the file info so the rest of the script knows what data to fetch
