@@ -93,14 +93,9 @@ async function fetchTideFromStation(station, date) {
     format: 'json',
   };
 
-  try {
-    return await fetch(`${apiUrl}?${new URLSearchParams(params)}`)
-      .then(response => response.json())
-      .then(data => processTideData(data.predictions))
-      .catch(error => console.error('Error fetching data:', error.stack))
-  } catch (error) {
-    console.error('Error fetching data:', error);
-  }
+  return await fetch(`${apiUrl}?${new URLSearchParams(params)}`)
+    .then(response => response.json())
+    .then(data => processTideData(data.predictions))
 }
 
 async function fetchTideData(area, date) {
