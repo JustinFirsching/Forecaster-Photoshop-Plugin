@@ -558,7 +558,9 @@ function setUvIndexData(doc, data) {
   }
 
   let todayString = new Date(todayData.date).toLocaleDateString("en-US")
-  doc.layers.getByName("upper").layers.getByName("Group 8").layers.getByName("upper").layers.getByName("3/24/2024").textItem.contents = todayString
+  let dateTextItem = doc.layers.getByName("upper").layers.getByName("Group 8").layers.getByName("upper").layers.getByName("3/24/2024").textItem
+  dateTextItem.contents = todayString
+  dateTextItem.characterStyle.size = getFontSize(doc, 'date')
 
   let uv = Math.max(todayData.day.uvIndex || 0, todayData.night.uvIndex || 0)
   for (i = 1; i <= 10; i++) {
