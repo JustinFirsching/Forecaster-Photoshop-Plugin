@@ -185,14 +185,14 @@ function processForecastDataVisualCrossing(data) {
   var dayCount = 0
   var nightCount = 0
 
-  let requestedDate = new Date(`${data.requestedDate} 8:00:00`)
+  let requestedDate = new Date(data.requestedDate)
+  requestedDate.setHours(8)
 
   // Concatenate all of the hourly data points
   let hourlyDataPoints = data
     .flatMap(day => day.hours)
     .filter(forecast => {
       let thisDate = new Date(forecast.datetimeEpoch * 1000)
-      console.log(thisDate, requestedDate, thisDate >= requestedDate)
       return thisDate >= requestedDate
     })
 
