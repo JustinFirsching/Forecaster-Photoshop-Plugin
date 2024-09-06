@@ -104,6 +104,7 @@ async function fetchTideData(area, date) {
 
   // Thanks JavaScript...
   var month = dateObj.getMonth()
+  month += 1
   if (month < 10) {
     month = `0${month}`
   }
