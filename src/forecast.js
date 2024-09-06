@@ -186,7 +186,11 @@ function processForecastDataVisualCrossing(data) {
   var nightCount = 0
 
   // Concatenate all of the hourly data points
-  let hourlyDataPoints = data.flatMap(day => day.hours)
+  let hourlyDataPoints = data
+    .flatMap(day => day.hours)
+    .filter(forecast =>
+      new Date(forecast.datetimeEpoch * 1000) >= new Date(`${data.requestedDate} 8:00:00`)
+    )
 
   hourlyDataPoints.forEach(forecast => {
     const time = new Date(forecast.datetimeEpoch * 1000)
@@ -303,14 +307,20 @@ async function fetchForecastTomorrowIO(zipcode, apiKey) {
   let apiUrl = `https://api.tomorrow.io/v4/weather/forecast?location=${zipcode}%20US&units=imperial&timesteps=1h&apikey=${apiKey}`
   return await fetch(apiUrl)
     .then(response => response.json())
-    .then(data => processForecastDataTomorrowIO(data.timelines.hourly))
+    .then(data => {
+      console.log(data)
+      return processForecastDataTomorrowIO(data.timelines.hourly)
+    })
 }
 
 async function fetchForecastVisualCrossing(zipcode, apiKey) {
   let apiUrl = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${zipcode}?unitGroup=us&include=days,hours&key=${apiKey}`
   return await fetch(apiUrl)
     .then(response => response.json())
-    .then(data => processForecastDataVisualCrossing(data.days))
+    .then(data => {
+      console.log(data)
+      return processForecastDataVisualCrossing(data.days)
+    })
 }
 
 function setTodayData(doc, data) {
