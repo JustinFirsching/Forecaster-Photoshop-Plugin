@@ -15,28 +15,24 @@
 <body>
     <sp-heading>Forecaster Plugin</sp-heading>
     <sp-body>
-        <div class="container">
-            Forecaster: <select id="forecaster" name="forecaster" value="VisualCrossing"/>
-            <option value="TomorrowIO">TomorrowIO</option>
-            <option value="VisualCrossing">Visual Crossing</option>
+        <div>
+            Forecaster: <select id="forecaster" name="forecaster" value="VisualCrossing">
+                <option value="TomorrowIO">TomorrowIO</option>
+                <option value="VisualCrossing">Visual Crossing</option>
+            </select>
             <br/>
-        </div>
-        <div class="container">
+
             <!-- API Keys as input -->
             TomorrowIO API Key: <input id="tomorrowIoApiKey" value="" /> <br/>
             Visual Crossing API Key: <input id="visualCrossingApiKey" value="" /> <br/>
-        </div>
-        <div class="container">
+
             Forecast Date: <input type="date" id="datepicker" value="" /> <br/>
-        </div>
-        <div class="container">
+
             Zip Code: <input type="number" id="zipcode" value="34292" /> <br/>
-        </div>
-        <div class="container">
+
             Latitude: <input type="number" id="latitude" value="27.06" /> <br/>
             Longitude: <input type="number" id="longitude" value="-82.27" /> <br/>
-        </div>
-        <div class="container">
+
             <!-- Actual temperature -->
             Low Temperature Modifier: <input type="number" id="lowTempModifier" value="0" /> <br/>
             High Temperature Modifier: <input type="number" id="highTempModifier" value="0" /> <br/>
