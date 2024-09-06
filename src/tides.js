@@ -100,7 +100,20 @@ async function fetchTideFromStation(station, date) {
 
 async function fetchTideData(area, date) {
   let dateObj = new Date(date)
-  let dateString = `${dateObj.getFullYear()}${dateObj.getMonth()}${dateObj.getDate()}`
+  let year = dateObj.getFullYear()
+
+  // Thanks JavaScript...
+  var month = dateObj.getMonth()
+  if (month < 10) {
+    month = `0${month}`
+  }
+
+  var day = dateObj.getDate()
+  if (day < 10) {
+    day = `0${day}`
+  }
+
+  let dateString = `${year}${month}${day}`
   stations = parameters.tideStations[area]
   return {
     location1: await fetchTideFromStation(stations.location1, dateString),
