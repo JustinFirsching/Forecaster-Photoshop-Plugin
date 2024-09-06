@@ -229,7 +229,7 @@ function processForecastDataVisualCrossing(data) {
       f.day.temperatureApparentAvg = (f.day.temperatureApparent || 0) + forecast.feelslike
       f.day.temperatureMin = Math.min(forecast.temp, f.day.temperatureMin || 999)
       f.day.temperatureMax = Math.max(forecast.temp, f.day.temperatureMax || -999)
-      f.day.temperatureApparentMax = Math.max(forecast.feelslikemax, f.day.temperatureApparentMax || -999)
+      f.day.temperatureApparentMax = Math.max(forecast.feelslike, f.day.temperatureApparentMax || -999)
 
       // Wind
       f.day.windSpeedAvg = (f.day.windSpeedAvg || 0) + forecast.windspeed
