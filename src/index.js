@@ -132,8 +132,8 @@ document.getElementById('submit').addEventListener('click', async () => {
     try {
       await run()
     } catch (e) {
-      console.log(e)
-      app.showAlert(e)
+      console.log(e.stack)
+      app.showAlert(e.stack)
     } finally {
       isRunning = false
     }
