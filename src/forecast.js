@@ -175,26 +175,27 @@ function processForecastDataVisualCrossing(data) {
 
   let forecasts = []
 
+  var dayCount = 0
+  var nightCount = 0
+
+  // Concatenate all of the hourly data points
+  var found = false
+  let hourlyDataPoints = data
+    .flatMap(day => day.hours)
+    .filter(forecast => {
+      let thisDate = new Date(forecast.datetimeEpoch * 1000)
+      if (thisDate.getHours() == 8) {
+        found = true
+      }
+      return found
+    })
+
   let d1 = new Date(data[0].datetimeEpoch * 1000)
   var f = {
     date: d1.toLocaleDateString('en-US'),
     day: {},
     night: {},
   }
-
-  var dayCount = 0
-  var nightCount = 0
-
-  let requestedDate = new Date(data.requestedDate)
-  requestedDate.setHours(8)
-
-  // Concatenate all of the hourly data points
-  let hourlyDataPoints = data
-    .flatMap(day => day.hours)
-    .filter(forecast => {
-      let thisDate = new Date(forecast.datetimeEpoch * 1000)
-      return thisDate >= requestedDate
-    })
 
   hourlyDataPoints.forEach(forecast => {
     const time = new Date(forecast.datetimeEpoch * 1000)
