@@ -52,7 +52,9 @@ async function getWeatherData(arr) {
   let api_key_visual_crossing = document.getElementById('visualCrossingApiKey').value
 
   // Fetch the forecast once and just reuse as needed
-  let forecaster = document.getElementById('forecaster').value
+  let forecaster = document.getElementById('forecaster').value || "Visual Crossing"
+  console.log(`Working with forecaster ${forecaster}`)
+
   let forecast = (forecaster.toLowerCase().trim() == "tomorrowio") ?
     await fetchForecastTomorrowIO(zip, api_key_tomorrow_io) :
     await fetchForecastVisualCrossing(zip, api_key_visual_crossing)
