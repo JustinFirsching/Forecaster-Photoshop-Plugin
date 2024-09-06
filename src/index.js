@@ -106,6 +106,7 @@ async function run() {
   }
 
   const weatherData = await getWeatherData(fileInfo)
+  console.log(weatherData)
 
   core.executeAsModal(() => {
     weatherData.forEach(data => {
