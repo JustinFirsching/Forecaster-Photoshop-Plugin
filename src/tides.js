@@ -136,19 +136,44 @@ function setTideData(doc, data) {
   // If we have a first location layer and tide data
   if (doc.layers.getByName('location 1') != null && data.tideData.location1 != null) {
     let loc1Layers = doc.layers.getByName('location 1').layers
+    // Top data will always exist
     loc1Layers.getByName('low tide copy').layers.getByName('time text').layers.getByName('top').textItem.contents = data.tideData.location1.hightide.top
-    loc1Layers.getByName('low tide copy').layers.getByName('time text').layers.getByName('bot').textItem.contents = data.tideData.location1.hightide.bot
     loc1Layers.getByName('low tide').layers.getByName('time text').layers.getByName('top').textItem.contents = data.tideData.location1.lowtide.top
-    loc1Layers.getByName('low tide').layers.getByName('time text').layers.getByName('bot').textItem.contents = data.tideData.location1.lowtide.bot
+
+    // Bottom may not
+    if (data.tideData.location1.hightide.bot) {
+      loc1Layers.getByName('low tide copy').layers.getByName('time text').layers.getByName('bot').textItem.contents = data.tideData.location1.hightide.bot
+    } else {
+      loc1Layers.getByName('low tide copy').layers.getByName('time text').layers.getByName('bot').visible = false
+    }
+
+    if (data.tideData.location1.hightide.bot) {
+      loc1Layers.getByName('low tide').layers.getByName('time text').layers.getByName('bot').textItem.contents = data.tideData.location1.lowtide.bot
+    } else {
+      loc1Layers.getByName('low tide').layers.getByName('time text').layers.getByName('bot').visible = false
+    }
   }
 
   // If we have a second location layer and tide data
   if (doc.layers.getByName('location 2') != null && data.tideData.location2 != null) {
     var loc2Layers = doc.layers.getByName('location 2').layers
+    // Top data will always exist
     loc2Layers.getByName('low tide copy').layers.getByName('time text').layers.getByName('top').textItem.contents = data.tideData.location2.hightide.top
-    loc2Layers.getByName('low tide copy').layers.getByName('time text').layers.getByName('bot').textItem.contents = data.tideData.location2.hightide.bot
     loc2Layers.getByName('low tide').layers.getByName('time text').layers.getByName('top').textItem.contents = data.tideData.location2.lowtide.top
-    loc2Layers.getByName('low tide').layers.getByName('time text').layers.getByName('bot').textItem.contents = data.tideData.location2.lowtide.bot
+
+
+    // Bottom may not
+    if (data.tideData.location2.hightide.bot) {
+      loc2Layers.getByName('low tide copy').layers.getByName('time text').layers.getByName('bot').textItem.contents = data.tideData.location2.hightide.bot
+    } else {
+      loc2Layers.getByName('low tide copy').layers.getByName('time text').layers.getByName('bot').visible = false
+    }
+
+    if (data.tideData.location2.lowtide.bot) {
+      loc2Layers.getByName('low tide').layers.getByName('time text').layers.getByName('bot').textItem.contents = data.tideData.location2.lowtide.bot
+    } else {
+      loc2Layers.getByName('low tide').layers.getByName('time text').layers.getByName('bot').visible = false
+    }
   }
 }
 
