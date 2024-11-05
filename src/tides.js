@@ -115,7 +115,7 @@ async function fetchTideData(area, date) {
   }
 
   let dateString = `${year}${month}${day}`
-  stations = parameters.tideStations[area]
+  let stations = parameters.tideStations[area]
   return {
     location1: await fetchTideFromStation(stations.location1, dateString),
     location2: await fetchTideFromStation(stations.location2, dateString),
