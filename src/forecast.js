@@ -553,7 +553,7 @@ function setFiveDayData(doc, data) {
     precipitationTextItem.characterStyle.size = getFontSize(doc, 'precipitation')
 
     // TODO: If possible, do the weather text prediction
-    dayLayers.layers.getByName(layerNames[i].conditions).textItem.contents = forecast.conditions
+    dayLayers.layers.getByName(layerNames[i].conditions).textItem.contents = forecast.conditions || "NOT FOUND"
   }
 }
 
