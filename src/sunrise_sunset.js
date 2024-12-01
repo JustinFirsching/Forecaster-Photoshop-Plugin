@@ -1,7 +1,6 @@
 async function fetchSunriseSunset(lat, long, requestedDate) {
   let date = new Date(requestedDate)
   // Get the next day's data so we can post early
-  // TODO: Verify that this gets tomorrows data appropriately
   date.setDate(date.getDate() + 1)
 
   let dateString = `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}`
