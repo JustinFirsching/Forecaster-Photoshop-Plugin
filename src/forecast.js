@@ -190,9 +190,17 @@ function processForecastDataVisualCrossing(data) {
       return found
     })
 
+  let conditions = data
+    .reduce((acc, day) => {
+      const dateKey = new Date(day.datetimeEpoch * 1000).getDate()
+      acc[dateKey] = day.conditions
+      return acc
+    }, {})
+
   let d1 = new Date(data[0].datetimeEpoch * 1000)
-  var f = {
+  let f = {
     date: d1.toLocaleDateString('en-US'),
+    conditions: conditions[d1.getDate()] || "NOT FOUND",
     day: {},
     night: {},
   }
@@ -223,6 +231,7 @@ function processForecastDataVisualCrossing(data) {
       // Reset
       f = {
         date: time.toLocaleDateString('en-US'),
+        conditions: conditions[time.getDate()],
         day: {},
         night: {}
       }
@@ -544,8 +553,7 @@ function setFiveDayData(doc, data) {
     precipitationTextItem.characterStyle.size = getFontSize(doc, 'precipitation')
 
     // TODO: If possible, do the weather text prediction
-    // let conditions = "Raining Iguanas"
-    // dayLayers.layers.getByName(layerNames[i].conditions).textItem.contents = conditions
+    dayLayers.layers.getByName(layerNames[i].conditions).textItem.contents = forecast.conditions
   }
 }
 
