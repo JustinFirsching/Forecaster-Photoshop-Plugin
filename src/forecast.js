@@ -33,6 +33,82 @@ const getPrecipitationText = (precipitation) =>
     precipitation > 20 ? `${Math.round(precipitation / 5) * 5}%` : ""
     : "Unknown"
 
+let visual_crossing_icon_mapping = {
+    // Available Layers (from GIMP, so ignore the "#N"):
+    // - Day
+    //   - "Thunderstorm 2"
+    //   - "Thunderstorm & Sun"
+    //   - "Cloud #2"
+    //   - "Cloud #3"
+    //   - "Rain 2"
+    //   - "Rain"
+    //   - "Rain + Sun II"
+    //   - "Thunderstorm 2 #3"
+    //   - "Fog"
+    //   - "Sun 3"
+    //   - "Rain + Sun"
+    //   - "Sun & Clouds"
+    //   - "Wind"
+    // - Night
+    //   - "Cloud #1"
+    //   - "Cloud"
+    //   - "Thunderstorm 2 #1"
+    //   - "Thunderstorm 2"
+    //   - "Wind"
+    //   - "Rain"
+    //   - "Fog"
+    //   - "Moon + Stars"
+    //   - "Night + Stars"
+    // - Five Day
+    //   - "Mostly Sunny #1"  // This is empty...
+    //   - "Cloud #3"
+    //   - "Rain 2 #1"
+    //   - "Cloud #2"
+    //   - "Thunderstorm & Sun #1"
+    //   - "Sun & Clouds #1"
+    //   - "Rain #1"
+    //   - "Thunderstorm 2 #1"
+    //   - "Rain + Sun copy"
+    //   - "Wind copy 2"
+    //   - "Sun icon #1"
+    "snow": [],  // If we somehow get a snow icon, just clear the icons
+    "snow-showers-day": [],  // If we somehow get a snow icon, just clear the icons
+    "snow-showers-night": [],  // If we somehow get a snow icon, just clear the icons
+    "thunder-rain": [ "Thunderstorm 2" ],
+    "thunder-showers-day": [ "Thunderstorm 2" ],
+    "thunder-showers-night": [ "Thunderstorm 2", "Moon + Stars" ],
+    "rain": [ "Rain 2" ],
+    "showers-day": [ "Rain + Sun" ],
+    "showers-night": [ "Rain", "Moon + Stars" ],
+    "fog": [ "Fog" ],
+    "wind": [ "Wind" ],
+    "cloudy": [ "Cloud" ], // TODO: Fix this after layer rename (Cloud #1 and Cloud #3)
+    "partly-cloudy-day": [ "Sun & Clouds" ],
+    "partly-cloudy-night": [ "Cloud", "Moon + Stars" ],
+    "clear-day": [ "Sun", "Sun icon" ],
+    "clear-night": [ "Moon + Stars" ],
+}
+
+psd_weather_icon_layer_names = [
+  "Cloud",
+  "Fog",
+  "Moon + Stars",
+  "Mostly Sunny",  // This is empty...
+  "Night + Stars",
+  "Rain + Sun II",
+  "Rain + Sun copy",
+  "Rain + Sun",
+  "Rain 2",
+  "Rain",
+  "Sun & Clouds",
+  "Sun 3",
+  "Sun icon",
+  "Thunderstorm & Sun",
+  "Thunderstorm 2",
+  "Wind copy 2",
+  "Wind",
+]
+
 // Iterate through the elements of the `data` array
 // Each element has a `time` property that is a string in the format "YYYY-MM-DDTHH:MM:SSZ"
 // If the time is between 8 AM and 8 PM then save the `windGustAvg` value to f.dayGustAvg
@@ -197,10 +273,18 @@ function processForecastDataVisualCrossing(data) {
       return acc
     }, {})
 
+  let icons = data
+    .reduce((acc, day) => {
+      const dateKey = new Date(day.datetimeEpoch * 1000).getDate()
+      acc[dateKey] = day.icon
+      return acc
+    }, {})
+
   let d1 = new Date(data[0].datetimeEpoch * 1000)
   let f = {
     date: d1.toLocaleDateString('en-US'),
     conditions: conditions[d1.getDate()] || "NOT FOUND",
+    icon: icons[d1.getDate()],
     day: {},
     night: {},
   }
@@ -232,6 +316,7 @@ function processForecastDataVisualCrossing(data) {
       f = {
         date: time.toLocaleDateString('en-US'),
         conditions: conditions[time.getDate()],
+        icon: icons[d1.getDate()],
         day: {},
         night: {}
       }
@@ -328,7 +413,7 @@ async function fetchForecastTomorrowIO(zipcode, apiKey) {
 }
 
 async function fetchForecastVisualCrossing(zipcode, apiKey) {
-  let apiUrl = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${zipcode}?unitGroup=us&include=days,hours&key=${apiKey}`
+  let apiUrl = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${zipcode}?unitGroup=us&include=days,hours&key=${apiKey},iconSet=icons2`
   return await fetch(apiUrl)
     .then(response => response.json())
     .then(data => {
@@ -393,6 +478,7 @@ function setTodayData(doc, data) {
   lowTempTextItem.characterStyle.size = getFontSize(doc, 'today_temp')
 
   // Today precipitation
+  // TODO: This isn't updating. Suspect a bad layer name. Need to verify on Photoshop.
   let dayPrecipitationTextItem = dayLayers.layers.getByName('% chance').layers.getByName('50%').textItem
   dayPrecipitationTextItem.contents = getPrecipitationText(dayData.precipitation)
   dayPrecipitationTextItem.characterStyle.size = getFontSize(doc, 'today_precip')
@@ -435,6 +521,25 @@ function setTodayData(doc, data) {
   let nightWindDirectionTextItem = nightWindLayers.layers.getByName('NNW').textItem
   nightWindDirectionTextItem.contents = nightWindDirectionDiff > 45 && nightWindDirectionDiff < 315 ? "Variable" : degreesToDirection(nightData.windDirectionAvg)
   nightWindDirectionTextItem.characterStyle.size = getFontSize(doc, 'wind_direction')
+
+  let wanted_icons = visual_crossing_icon_mapping[todayData.icon] || []
+  // Iterate all of the icons and set them to visible if we want them and not
+  // visible if we don't want them
+  for(let curr = 0; curr < psd_weather_icon_layer_names.length; curr++) {
+      let icon = psd_weather_icon_layer_names[curr]
+
+      // Day
+      let layer = dayLayers.layers.getByName(icon)
+      if(layer != null) {
+          layer.visible = wanted_icons.includes(icon)
+      }
+
+      // Night
+      layer = nightLayers.layers.getByName(icon)
+      if(layer != null) {
+          layer.visible = wanted_icons.includes(icon)
+      }
+  }
 }
 
 function setFiveDayData(doc, data) {
@@ -552,8 +657,18 @@ function setFiveDayData(doc, data) {
     precipitationTextItem.contents = precipitation
     precipitationTextItem.characterStyle.size = getFontSize(doc, 'precipitation')
 
-    // TODO: If possible, do the weather text prediction
+    // If possible, do the weather text prediction
     dayLayers.layers.getByName(layerNames[i].conditions).textItem.contents = forecast.conditions || "NOT FOUND"
+
+    // Try to set the icons
+    let wanted_icons = visual_crossing_icon_mapping[forecast.icon] || []
+    for(let curr = 0; curr < psd_weather_icon_layer_names.length; curr++) {
+        let icon = psd_weather_icon_layer_names[curr]
+        let layer = dayLayers.layers.getByName(icon)
+        if(layer != null) {
+            layer.visible = wanted_icons.includes(icon)
+        }
+    }
   }
 }
 
