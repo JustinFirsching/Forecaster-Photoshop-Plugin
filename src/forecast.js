@@ -89,7 +89,7 @@ let visual_crossing_icon_mapping = {
     "clear-night": [ "Moon + Stars" ],
 }
 
-psd_weather_icon_layer_names = [
+let psd_weather_icon_layer_names = [
   "Cloud",
   "Fog",
   "Moon + Stars",
