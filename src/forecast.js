@@ -330,7 +330,7 @@ function processForecastDataVisualCrossing(data) {
 
     let conditions = data.reduce((acc, day) => {
         const dateKey = new Date(day.datetimeEpoch * 1000).getDate()
-        acc[dateKey] = day.conditions
+        acc[dateKey] = day.conditions == "Clear" ? "Sunny" : day.conditions
         return acc
     }, {})
 
