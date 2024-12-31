@@ -888,7 +888,7 @@ function setFiveDayData(doc, data) {
         // Do this after icons incase of name overlap
         let conditionLayer = dayLayers.layers.getByName(layerNames[i].conditions)
         conditionLayer.textItem.contents = forecast.conditions
-        conditionLayer.textItem.visible = true
+        conditionLayer.visible = true
     }
 }
 
