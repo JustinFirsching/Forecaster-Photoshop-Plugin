@@ -30,7 +30,7 @@ function getWindSpeedText(averageSpeed) {
 
 const getPrecipitationText = (precipitation) =>
     precipitation != null
-        ? precipitation > 20
+        ? precipitation >= 20
             ? `${Math.round(precipitation / 5) * 5}%`
             : '10%'
         : 'Unknown'
@@ -842,6 +842,9 @@ function setFiveDayData(doc, data) {
         // Precipitation
         let precipitation =
             dayData != null ? getPrecipitationText(dayData.precipitation) : ''
+        if (dayData.precipitation != null && dayData.precipitation >= 20) {
+            dayLayers.getByName('pop').visible = true
+        }
         let precipitationTextItem = dayLayers.layers
             .getByName('pop')
             .layers.getByName(layerNames[i].precipitation).textItem
