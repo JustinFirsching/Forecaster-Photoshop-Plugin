@@ -85,7 +85,7 @@ let visual_crossing_icon_mapping = {
     fog: ['Sun & Clouds', 'Fog'],
     wind: ['Sun & Clouds', 'Wind'],
     cloudy: ['Cloud'],
-    'partly-cloudy-day': ['Sun & Clouds', 'Moon + Stars'],
+    'partly-cloudy-day': ['Sun 3', 'Moon + Stars', 'Sun icon', 'Little Cloud'],
     'partly-cloudy-night': ['Sun 3', 'Little Cloud Night', 'Moon + Stars'],
     'clear-day': ['Sun 3', 'Sun icon'],
     'clear-night': ['Sun 3', 'Moon + Stars'],
@@ -114,6 +114,11 @@ let psd_weather_icon_layer_names = [
     'Wind copy 2',
     'Wind',
 ]
+
+let condition_translations = {
+    "Clear": "Sunny",
+    "Partially cloudy": "Partly Cloudy",
+}
 
 // Iterate through the elements of the `data` array
 // Each element has a `time` property that is a string in the format "YYYY-MM-DDTHH:MM:SSZ"
@@ -330,7 +335,7 @@ function processForecastDataVisualCrossing(data) {
 
     let conditions = data.reduce((acc, day) => {
         const dateKey = new Date(day.datetimeEpoch * 1000).getDate()
-        acc[dateKey] = day.conditions == 'Clear' ? 'Sunny' : day.conditions
+        acc[dateKey] = condition_translations[day.conditions] ?? day.conditions
         return acc
     }, {})
 
