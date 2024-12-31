@@ -751,7 +751,7 @@ function setFiveDayData(doc, data) {
             day: 'FRI',
             tempHigh: '70',
             tempLow: '54',
-            conditions: 'Partly Sunny',
+            conditions: 'Partly Cloudy',
             precipitation: '20%',
         },
     ]
