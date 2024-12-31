@@ -78,16 +78,16 @@ let visual_crossing_icon_mapping = {
     'snow-showers-night': [], // If we somehow get a snow icon, just clear the icons
     'thunder-rain': ['Thunderstorm 2'],
     'thunder-showers-day': ['Thunderstorm 2'],
-    'thunder-showers-night': ['Thunderstorm 2', 'Moon + Stars'],
+    'thunder-showers-night': ['Little Thunderstorm 2', 'Moon + Stars'],
     rain: ['Rain 2'],
     'showers-day': ['Rain + Sun'],
-    'showers-night': ['Rain', 'Moon + Stars'],
-    fog: ['Fog'],
-    wind: ['Wind'],
+    'showers-night': ['Little Rain', 'Moon + Stars'],
+    fog: ['Sun & Clouds', 'Fog'],
+    wind: ['Sun & Clouds', 'Wind'],
     cloudy: ['Cloud'],
     'partly-cloudy-day': ['Sun & Clouds'],
-    'partly-cloudy-night': ['Cloud', 'Moon + Stars'],
-    'clear-day': ['Sun', 'Sun icon'],
+    'partly-cloudy-night': ['Little Cloud', 'Moon + Stars'],
+    'clear-day': ['Sun 3', 'Sun icon'],
     'clear-night': ['Moon + Stars'],
 }
 
