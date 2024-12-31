@@ -117,7 +117,16 @@ let psd_weather_icon_layer_names = [
 
 let condition_translations = {
     "Clear": "Sunny",
-    "Partially cloudy": "Partly Cloudy",
+}
+
+function map_conditions(condition, cloudCov) {
+    if(condition == "Partially cloudy") {
+        if (cloudCov >= 20 && cloudCov < 50) {
+            return "Mostly Sunny"
+        }
+        return "Partly Cloudy"
+    }
+    return condition_translations[condition] ?? condition
 }
 
 // Iterate through the elements of the `data` array
@@ -333,9 +342,15 @@ function processForecastDataVisualCrossing(data) {
             return found
         })
 
+    let cloudCover = data.reduce((acc, day) => {
+        const dateKey = new Date(day.datetimeEpoch * 1000).getDate()
+        acc[dateKey] = day.cloudcover
+        return acc
+    }, {})
+
     let conditions = data.reduce((acc, day) => {
         const dateKey = new Date(day.datetimeEpoch * 1000).getDate()
-        acc[dateKey] = condition_translations[day.conditions] ?? day.conditions
+        acc[dateKey] = map_conditions(day.conditions, cloudCover[dateKey])
         return acc
     }, {})
 
