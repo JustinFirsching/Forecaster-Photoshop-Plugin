@@ -344,6 +344,7 @@ function processForecastDataVisualCrossing(data) {
         acc[dateKey] = day.icon
         return acc
     }, {})
+    console.log(icons)
 
     let d1 = new Date(data[0].datetimeEpoch * 1000)
     let f = {
@@ -691,6 +692,8 @@ function setTodayData(doc, data) {
     )
 
     let wanted_icons = visual_crossing_icon_mapping[todayData.icon] || []
+    console.log(`Received Icon: ${todayData.icon}`)
+    console.log(`Wanted Icons: ${wanted_icons}`)
     // Iterate all of the icons and set them to visible if we want them and not
     // visible if we don't want them
     for (let curr = 0; curr < psd_weather_icon_layer_names.length; curr++) {
@@ -859,6 +862,9 @@ function setFiveDayData(doc, data) {
 
         // Try to set the icons
         let wanted_icons = visual_crossing_icon_mapping[forecast.icon] || []
+        console.log(`Received Icon: ${forecast.icon}`)
+        console.log(`Wanted Icons: ${wanted_icons}`)
+
         for (let curr = 0; curr < psd_weather_icon_layer_names.length; curr++) {
             let icon = psd_weather_icon_layer_names[curr]
             let layer = dayLayers.layers.getByName(icon)
