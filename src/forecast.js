@@ -39,22 +39,22 @@ let visual_crossing_icon_mapping = {
     // Available Layers (from GIMP, so ignore the "#N"):
     // - Day
     //   - "Thunderstorm 2"
+    //   - "Little Thunderstorm 2"
     //   - "Thunderstorm & Sun"
-    //   - "Cloud #2"
-    //   - "Cloud #3"
+    //   - "Little Cloud"
+    //   - "Cloud"
     //   - "Rain 2"
     //   - "Rain"
     //   - "Rain + Sun II"
-    //   - "Thunderstorm 2 #3"
     //   - "Fog"
     //   - "Sun 3"
     //   - "Rain + Sun"
     //   - "Sun & Clouds"
     //   - "Wind"
     // - Night
-    //   - "Cloud #1"
+    //   - "Little Cloud"
     //   - "Cloud"
-    //   - "Thunderstorm 2 #1"
+    //   - "Little Thunderstorm 2"
     //   - "Thunderstorm 2"
     //   - "Wind"
     //   - "Rain"
@@ -62,17 +62,17 @@ let visual_crossing_icon_mapping = {
     //   - "Moon + Stars"
     //   - "Night + Stars"
     // - Five Day
-    //   - "Mostly Sunny #1"  // This is empty...
-    //   - "Cloud #3"
-    //   - "Rain 2 #1"
-    //   - "Cloud #2"
-    //   - "Thunderstorm & Sun #1"
-    //   - "Sun & Clouds #1"
-    //   - "Rain #1"
-    //   - "Thunderstorm 2 #1"
+    //   - "Mostly Sunny"  // This is empty...
+    //   - "Little Cloud"
+    //   - "Rain 2"
+    //   - "Cloud"
+    //   - "Thunderstorm & Sun"
+    //   - "Sun & Clouds"
+    //   - "Rain"
+    //   - "Thunderstorm 2"
     //   - "Rain + Sun copy"
     //   - "Wind copy 2"
-    //   - "Sun icon #1"
+    //   - "Sun icon"
     snow: [], // If we somehow get a snow icon, just clear the icons
     'snow-showers-day': [], // If we somehow get a snow icon, just clear the icons
     'snow-showers-night': [], // If we somehow get a snow icon, just clear the icons
@@ -84,7 +84,7 @@ let visual_crossing_icon_mapping = {
     'showers-night': ['Rain', 'Moon + Stars'],
     fog: ['Fog'],
     wind: ['Wind'],
-    cloudy: ['Cloud'], // TODO: Fix this after layer rename (Cloud #1 and Cloud #3)
+    cloudy: ['Cloud'],
     'partly-cloudy-day': ['Sun & Clouds'],
     'partly-cloudy-night': ['Cloud', 'Moon + Stars'],
     'clear-day': ['Sun', 'Sun icon'],
