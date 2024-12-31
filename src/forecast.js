@@ -522,7 +522,7 @@ async function fetchForecastTomorrowIO(zipcode, apiKey) {
 }
 
 async function fetchForecastVisualCrossing(zipcode, apiKey) {
-    let apiUrl = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${zipcode}?unitGroup=us&include=days,hours&key=${apiKey},iconSet=icons2`
+    let apiUrl = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${zipcode}?unitGroup=us&include=days,hours&key=${apiKey}&iconSet=icons2`
     return await fetch(apiUrl)
         .then((response) => response.json())
         .then((data) => {
