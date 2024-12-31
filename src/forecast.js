@@ -615,7 +615,6 @@ function setTodayData(doc, data) {
     lowTempTextItem.characterStyle.size = getFontSize(doc, 'today_temp')
 
     // Today precipitation
-    // TODO: This isn't updating. Suspect a bad layer name. Need to verify on Photoshop.
     let dayPrecipitationTextItem = dayLayers.layers
         .getByName('% chance')
         .layers.getByName('50%').textItem
