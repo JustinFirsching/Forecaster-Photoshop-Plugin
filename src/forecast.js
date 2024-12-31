@@ -872,8 +872,9 @@ function setFiveDayData(doc, data) {
         )
 
         // If possible, do the weather text prediction
-        dayLayers.layers.getByName(layerNames[i].conditions).textItem.contents =
-            forecast.conditions || 'NOT FOUND'
+        let conditionLayer = dayLayers.layers.getByName(layerNames[i].conditions)
+        conditionLayer.textItem.contents = forecast.conditions || 'NOT FOUND'
+        conditionLayer.visible = true
 
         // Try to set the icons
         let wanted_icons = visual_crossing_icon_mapping[forecast.icon] || []
