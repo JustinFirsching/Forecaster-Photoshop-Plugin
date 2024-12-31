@@ -871,11 +871,6 @@ function setFiveDayData(doc, data) {
             'precipitation'
         )
 
-        // If possible, do the weather text prediction
-        let conditionLayer = dayLayers.layers.getByName(layerNames[i].conditions)
-        conditionLayer.textItem.contents = forecast.conditions || 'NOT FOUND'
-        conditionLayer.visible = true
-
         // Try to set the icons
         let wanted_icons = visual_crossing_icon_mapping[forecast.icon] || []
         console.log(`Received Icon: ${forecast.icon}`)
@@ -888,6 +883,12 @@ function setFiveDayData(doc, data) {
                 layer.visible = wanted_icons.includes(icon)
             }
         }
+
+        // If possible, do the weather text prediction
+        // Do this after icons incase of name overlap
+        let conditionLayer = dayLayers.layers.getByName(layerNames[i].conditions)
+        conditionLayer.textItem.contents = forecast.conditions
+        conditionLayer.textItem.visible = true
     }
 }
 
