@@ -93,6 +93,7 @@ let visual_crossing_icon_mapping = {
 
 let psd_weather_icon_layer_names = [
     'Cloud',
+    'Little Cloud',
     'Fog',
     'Moon + Stars',
     'Mostly Sunny', // This is empty...
@@ -102,11 +103,13 @@ let psd_weather_icon_layer_names = [
     'Rain + Sun',
     'Rain 2',
     'Rain',
+    'Little Rain',
     'Sun & Clouds',
     'Sun 3',
     'Sun icon',
     'Thunderstorm & Sun',
     'Thunderstorm 2',
+    'Little Thunderstorm 2',
     'Wind copy 2',
     'Wind',
 ]
