@@ -32,7 +32,7 @@ const getPrecipitationText = (precipitation) =>
     precipitation != null
         ? precipitation > 20
             ? `${Math.round(precipitation / 5) * 5}%`
-            : ''
+            : '10%'
         : 'Unknown'
 
 let visual_crossing_icon_mapping = {
