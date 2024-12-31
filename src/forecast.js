@@ -330,12 +330,12 @@ function processForecastDataVisualCrossing(data) {
 
     let conditions = data.reduce((acc, day) => {
         const dateKey = new Date(day.datetimeEpoch * 1000).getDate()
-        acc[dateKey] = day.conditions == "Clear" ? "Sunny" : day.conditions
+        acc[dateKey] = day.conditions == 'Clear' ? 'Sunny' : day.conditions
         return acc
     }, {})
 
     let icons = data.reduce((acc, day) => {
-        const dateKey = new Date(day.datetimeEpoch * 1000).getDate()
+        const dateKey = new Date(day.datetimeEpoch * 1000).getDate().toLocaleString()
         acc[dateKey] = day.icon
         return acc
     }, {})
@@ -344,7 +344,7 @@ function processForecastDataVisualCrossing(data) {
     let f = {
         date: d1.toLocaleDateString('en-US'),
         conditions: conditions[d1.getDate()] || 'NOT FOUND',
-        icon: icons[d1.getDate()],
+        icon: icons[d1.getDate().toLocaleString()],
         day: {},
         night: {},
     }
@@ -376,7 +376,7 @@ function processForecastDataVisualCrossing(data) {
             f = {
                 date: time.toLocaleDateString('en-US'),
                 conditions: conditions[time.getDate()],
-                icon: icons[d1.getDate()],
+                icon: icons[d1.getDate().toLocaleString()],
                 day: {},
                 night: {},
             }
