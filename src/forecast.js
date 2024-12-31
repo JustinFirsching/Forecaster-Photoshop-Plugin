@@ -376,7 +376,7 @@ function processForecastDataVisualCrossing(data) {
             f = {
                 date: time.toLocaleDateString('en-US'),
                 conditions: conditions[time.getDate()],
-                icon: icons[d1.getDate()],
+                icon: icons[time.getDate()],
                 day: {},
                 night: {},
             }
