@@ -52,7 +52,7 @@ let visual_crossing_icon_mapping = {
     //   - "Sun & Clouds"
     //   - "Wind"
     // - Night
-    //   - "Little Cloud"
+    //   - "Little Cloud Night"
     //   - "Cloud"
     //   - "Little Thunderstorm 2"
     //   - "Thunderstorm 2"
@@ -80,20 +80,21 @@ let visual_crossing_icon_mapping = {
     'thunder-showers-day': ['Thunderstorm 2'],
     'thunder-showers-night': ['Little Thunderstorm 2', 'Moon + Stars'],
     rain: ['Rain 2'],
-    'showers-day': ['Rain + Sun'],
-    'showers-night': ['Little Rain', 'Moon + Stars'],
+    'showers-day': ['Rain + Sun', 'Moon + Stars'],
+    'showers-night': ['Sun 3', 'Little Rain', 'Moon + Stars'],
     fog: ['Sun & Clouds', 'Fog'],
     wind: ['Sun & Clouds', 'Wind'],
     cloudy: ['Cloud'],
-    'partly-cloudy-day': ['Sun & Clouds'],
-    'partly-cloudy-night': ['Little Cloud', 'Moon + Stars'],
+    'partly-cloudy-day': ['Sun & Clouds', 'Moon + Stars'],
+    'partly-cloudy-night': ['Sun 3', 'Little Cloud Night', 'Moon + Stars'],
     'clear-day': ['Sun 3', 'Sun icon'],
-    'clear-night': ['Moon + Stars'],
+    'clear-night': ['Sun 3', 'Moon + Stars'],
 }
 
 let psd_weather_icon_layer_names = [
     'Cloud',
     'Little Cloud',
+    'Little Cloud Night',
     'Fog',
     'Moon + Stars',
     'Mostly Sunny', // This is empty...
