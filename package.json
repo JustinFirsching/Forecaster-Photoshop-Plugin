@@ -1,6 +1,6 @@
 {
   "name": "com.github.justinfirsching.forecaster-photoshop-plugin",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "A Photoshop plugin for filling VFFWS PSDs with forecast data",
   "author": "Justin Firsching",
   "license": "Apache-2.0"
