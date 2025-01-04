@@ -87,8 +87,8 @@ let visual_crossing_icon_mapping = {
     cloudy: ['Cloud'],
     'partly-cloudy-day': ['Sun 3', 'Moon + Stars', 'Sun icon', 'Little Cloud'],
     'partly-cloudy-night': ['Sun 3', 'Little Cloud Night', 'Moon + Stars'],
-    'clear-day': ['Sun 3', 'Sun icon'],
-    'clear-night': ['Sun 3', 'Moon + Stars'],
+    'clear-day': ['Sun 3', 'Sun icon', 'Moon + Stars'],
+    'clear-night': ['Sun 3', 'Sun icon', 'Moon + Stars'],
 }
 
 let psd_weather_icon_layer_names = [
