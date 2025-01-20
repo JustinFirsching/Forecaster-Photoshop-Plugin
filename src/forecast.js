@@ -140,7 +140,7 @@ function setFontSize(textItem, doc, pt) {
 }
 
 function setVisibility(layer, visibility) {
-    console.log(`Setting ${layer} visibility to ${visibility}`)
+    console.debug(`Setting ${layer} visibility to ${visibility}`)
     layer.visible = visibility
 }
 
