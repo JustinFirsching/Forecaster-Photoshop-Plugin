@@ -64,7 +64,7 @@ function saveDoc(doc, basename) {
         .catch((e) => console.error(e))
 }
 
-let FONT_SIZES = {
+const FONT_SIZES = {
     apparent_temp: 6,
     condition: 8,
     date: 18,
@@ -78,6 +78,6 @@ let FONT_SIZES = {
     wind_speed: 10,
 }
 
-function getFontSize(doc, section) {
-    return (doc.resolution / 72) * FONT_SIZES[section]
+function getFontSize(doc, pt) {
+    return (doc.resolution / 72) * pt
 }

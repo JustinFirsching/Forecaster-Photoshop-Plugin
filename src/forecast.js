@@ -129,6 +129,21 @@ function map_conditions(condition, cloudCov) {
     return condition_translations[condition] ?? condition
 }
 
+function setText(textItem, text) {
+    console.debug(`Setting ${textItem} text to ${text}`)
+    textItem.contents = text
+}
+
+function setFontSize(textItem, doc, pt) {
+    console.debug(`Setting ${textItem} size to ${pt}`)
+    textItem.characterStyle.size = getFontSize(doc, pt)
+}
+
+function setVisibility(layer, visibility) {
+    console.log(`Setting ${layer} visibility to ${visibility}`)
+    layer.visible = visibility
+}
+
 // Iterate through the elements of the `data` array
 // Each element has a `time` property that is a string in the format "YYYY-MM-DDTHH:MM:SSZ"
 // If the time is between 8 AM and 8 PM then save the `windGustAvg` value to f.dayGustAvg
@@ -589,8 +604,8 @@ function setTodayData(doc, data) {
         .layers.getByName('Group 8')
         .layers.getByName('upper')
         .layers.getByName('1/28/2024').textItem
-    dateTextItem.contents = todayString
-    dateTextItem.characterStyle.size = getFontSize(doc, 'date')
+    setText(dateTextItem.contents, todayString)
+    setFontSize(dateTextItem, doc, FONT_SIZES.date)
 
     let dayData = todayData.day
     let nightData = todayData.night
@@ -607,8 +622,8 @@ function setTodayData(doc, data) {
     let highTempTextItem = tdTemps.layers
         .getByName('temp day')
         .layers.getByName('70').textItem
-    highTempTextItem.contents = `${Math.round(dayData.temperatureMax) + highTempOffset}`
-    highTempTextItem.characterStyle.size = getFontSize(doc, 'today_temp')
+    setText(highTempTextItem.contents, `${Math.round(dayData.temperatureMax) + highTempOffset}`)
+    setFontSize(highTempTextItem, doc, FONT_SIZES.today_temp)
 
     // Feels Like
     let apparentTempOffset = +document.getElementById('apparentTempModifier')
@@ -616,43 +631,30 @@ function setTodayData(doc, data) {
     let feelsLikeTempTextItem = tdTemps.layers
         .getByName('feels like')
         .layers.getByName('feels like 70').textItem
-    feelsLikeTempTextItem.contents = `feels like ${Math.round(dayData.temperatureApparentMax) + apparentTempOffset}`
-    feelsLikeTempTextItem.characterStyle.size = getFontSize(
-        doc,
-        'apparent_temp'
-    )
+    setText(feelsLikeTempTextItem.contents, `feels like ${Math.round(dayData.temperatureApparentMax) + apparentTempOffset}`)
+    setFontSize(feelsLikeTempTextItem, doc, FONT_SIZES.apparent_temp)
 
     // Tonight temp
     let lowTempOffset = +document.getElementById('lowTempModifier').value
     let lowTempTextItem = nightLayers.layers
         .getByName('temp night')
         .layers.getByName('53').textItem
-    lowTempTextItem.contents = `${Math.round(nightData.temperatureMin) + lowTempOffset}`
-    lowTempTextItem.characterStyle.size = getFontSize(doc, 'today_temp')
+    setText(lowTempTextItem.contents, `${Math.round(nightData.temperatureMin) + lowTempOffset}`)
+    setFontSize(lowTempTextItem, doc, FONT_SIZES.today_temp)
 
     // Today precipitation
     let dayPrecipitationTextItem = dayLayers.layers
         .getByName('% chance')
         .layers.getByName('50%').textItem
-    dayPrecipitationTextItem.contents = getPrecipitationText(
-        dayData.precipitation
-    )
-    dayPrecipitationTextItem.characterStyle.size = getFontSize(
-        doc,
-        'today_precip'
-    )
+    setText(dayPrecipitationTextItem.contents, getPrecipitationText(dayData.precipitation))
+    setFontSize(dayPrecipitationTextItem,  doc, FONT_SIZES.today_precip)
 
     // Tonight precipitation
     let nightPrecipitationTextItem = nightLayers.layers
         .getByName('% chance')
         .layers.getByName('10%').textItem
-    nightPrecipitationTextItem.contents = getPrecipitationText(
-        nightData.precipitation
-    )
-    nightPrecipitationTextItem.characterStyle.size = getFontSize(
-        doc,
-        'today_precip'
-    )
+    setText(nightPrecipitationTextItem.contents, getPrecipitationText(nightData.precipitation))
+    setFontSize(nightPrecipitationTextItem,  doc, FONT_SIZES.today_precip)
 
     // Today wind
     let dayWindLayers = dayLayers.layers.getByName('wind')
@@ -661,8 +663,8 @@ function setTodayData(doc, data) {
     let windSpeedDayText = getWindSpeedText(dayData.windSpeedAvg) || 'Unknown'
     let dayWindSpeedTextItem =
         dayWindLayers.layers.getByName('15 - 25').textItem
-    dayWindSpeedTextItem.contents = windSpeedDayText
-    dayWindSpeedTextItem.characterStyle.size = getFontSize(doc, 'wind_speed')
+    setText(dayWindSpeedTextItem.contents, windSpeedDayText)
+    setFontSize(dayWindSpeedTextItem, doc, FONT_SIZES.wind_speed)
 
     // Today wind direction
     // This one is kind of tricky since 355 and 5 are only 10 degrees from each other, but not mathematically.
@@ -670,14 +672,11 @@ function setTodayData(doc, data) {
     let dayWindDirectionDiff =
         dayData.windDirectionMax - dayData.windDirectionMin
     let windDirectionTextItem = dayWindLayers.layers.getByName('WNW').textItem
-    windDirectionTextItem.contents =
-        dayWindDirectionDiff > 45 && dayWindDirectionDiff < 315
+    let dayWindText = dayWindDirectionDiff > 45 && dayWindDirectionDiff < 315
             ? 'Variable'
             : degreesToDirection(dayData.windDirectionAvg)
-    windDirectionTextItem.characterStyle.size = getFontSize(
-        doc,
-        'wind_direction'
-    )
+    setText(windDirectionTextItem.contents, dayWindText)
+    setFontSize(windDirectionTextItem, doc, FONT_SIZES.wind_direction)
 
     // Tonight wind
     let nightWindLayers = nightLayers.layers.getByName('wind')
@@ -687,8 +686,8 @@ function setTodayData(doc, data) {
         getWindSpeedText(nightData.windSpeedAvg) || 'Unknown'
     let nightWindSpeedTextItem =
         nightWindLayers.layers.getByName('10 - 20').textItem
-    nightWindSpeedTextItem.contents = windSpeedNightText
-    nightWindSpeedTextItem.characterStyle.size = getFontSize(doc, 'wind_speed')
+    setText(nightWindSpeedTextItem.contents, windSpeedNightText)
+    setFontSize(nightWindSpeedTextItem, doc, FONT_SIZES.wind_speed)
 
     // Tonight wind direction
     // This one is kind of tricky since 355 and 5 are only 10 degrees from each other, but not mathematically.
@@ -697,14 +696,11 @@ function setTodayData(doc, data) {
         nightData.windDirectionMax - nightData.windDirectionMin
     let nightWindDirectionTextItem =
         nightWindLayers.layers.getByName('NNW').textItem
-    nightWindDirectionTextItem.contents =
-        nightWindDirectionDiff > 45 && nightWindDirectionDiff < 315
+    let nightWindText = nightWindDirectionDiff > 45 && nightWindDirectionDiff < 315
             ? 'Variable'
             : degreesToDirection(nightData.windDirectionAvg)
-    nightWindDirectionTextItem.characterStyle.size = getFontSize(
-        doc,
-        'wind_direction'
-    )
+    setText(nightWindDirectionTextItem, nightWindText)
+    setFontSize(nightWindDirectionTextItem, doc, FONT_SIZES.wind_direction)
 
     let wanted_icons = visual_crossing_icon_mapping[todayData.icon] || []
     console.log(`Received Icon: ${todayData.icon}`)
@@ -717,13 +713,13 @@ function setTodayData(doc, data) {
         // Day
         let layer = dayLayers.layers.getByName(icon)
         if (layer != null) {
-            layer.visible = wanted_icons.includes(icon)
+            setVisibility(layer, wanted_icons.includes(icon))
         }
 
         // Night
         layer = nightLayers.layers.getByName(icon)
         if (layer != null) {
-            layer.visible = wanted_icons.includes(icon)
+            setVisibility(layer, wanted_icons.includes(icon))
         }
     }
 }
@@ -801,8 +797,8 @@ function setFiveDayData(doc, data) {
         .layers.getByName('Group 8')
         .layers.getByName('upper')
         .layers.getByName('1/28/2024').textItem
-    dateTextItem.contents = todayString
-    dateTextItem.characterStyle.size = getFontSize(doc, 'date')
+    setText(dateTextItem, todayString)
+    setFontSize(dateTextItem, doc, FONT_SIZES.date)
 
     if (data.forecast.length < 5) {
         console.warn(
@@ -831,30 +827,27 @@ function setFiveDayData(doc, data) {
         let dayAbbrevTextItem = layerGroup.layers.getByName(
             layerNames[i].day
         ).textItem
-        dayAbbrevTextItem.contents = dayAbbrev
-        dayAbbrevTextItem.characterStyle.size = getFontSize(doc, 'day')
+        setText(dayAbbrevTextItem, dayAbbrev)
+        setFontSize(dayAbbrevTextItem, doc, FONT_SIZES.day)
 
         // Temp High
-        let highTempOffset =
-            Number(document.getElementById('highTempModifier').value) || 0
-        let highTemp =
-            Math.ceil(dayData.temperatureMax) + highTempOffset || 'ERR'
+        let highTempOffset = +document.getElementById('highTempModifier').value || 0
+        let highTemp = Math.ceil(dayData.temperatureMax) + highTempOffset || 'ERR'
+
         let highTempTextItem = layerGroup.layers.getByName(
             layerNames[i].tempHigh
         ).textItem
-        highTempTextItem.contents = highTemp
-        highTempTextItem.characterStyle.size = getFontSize(doc, 'high_temp')
+        setText(highTempTextItem, highTemp)
+        setFontSize(highTempTextItem, doc, FONT_SIZES.high_temp)
 
         // Temp Low
-        let lowTempOffset =
-            Number(document.getElementById('lowTempModifier').value) || 0
-        let lowTemp =
-            Math.floor(nightData.temperatureMin) + lowTempOffset || 'ERR'
+        let lowTempOffset = +document.getElementById('lowTempModifier').value || 0
+        let lowTemp = Math.floor(nightData.temperatureMin) + lowTempOffset || 'ERR'
         let lowTempTextItem = layerGroup.layers.getByName(
             layerNames[i].tempLow
         ).textItem
-        lowTempTextItem.contents = lowTemp
-        lowTempTextItem.characterStyle.size = getFontSize(doc, 'low_temp')
+        setText(lowTempTextItem, lowTemp)
+        setFontSize(lowTempTextItem, doc, FONT_SIZES.low_temp)
 
         // Precipitation
         let precipitation =
@@ -865,11 +858,8 @@ function setFiveDayData(doc, data) {
         let precipitationTextItem = dayLayers.layers
             .getByName('pop')
             .layers.getByName(layerNames[i].precipitation).textItem
-        precipitationTextItem.contents = precipitation
-        precipitationTextItem.characterStyle.size = getFontSize(
-            doc,
-            'precipitation'
-        )
+        setText(precipitationTextItem, precipitation)
+        setFontSize(precipitationTextItem, doc, FONT_SIZES.precipitation)
 
         // Try to set the icons
         let wanted_icons = visual_crossing_icon_mapping[forecast.icon] || []
@@ -880,15 +870,15 @@ function setFiveDayData(doc, data) {
             let icon = psd_weather_icon_layer_names[curr]
             let layer = dayLayers.layers.getByName(icon)
             if (layer != null) {
-                layer.visible = wanted_icons.includes(icon)
+                setVisibility(layer, wanted_icons.includes(icon))
             }
         }
 
         // If possible, do the weather text prediction
         // Do this after icons incase of name overlap
         let conditionLayer = dayLayers.layers.getByName(layerNames[i].conditions)
-        conditionLayer.textItem.contents = forecast.conditions
-        conditionLayer.visible = true
+        setText(conditionLayer, forecast.conditions)
+        setVisibility(conditionLayer, true)
     }
 }
 
@@ -922,12 +912,13 @@ function setUvIndexData(doc, data) {
         .layers.getByName('Group 8')
         .layers.getByName('upper')
         .layers.getByName('3/24/2024').textItem
-    dateTextItem.contents = todayString
-    dateTextItem.characterStyle.size = getFontSize(doc, 'date')
+    setText(dateTextItem, todayString)
+    setFontSize(dateTextItem, doc, FONT_SIZES.date)
 
     let uv = Math.max(todayData.day.uvIndex || 0, todayData.night.uvIndex || 0)
     for (i = 1; i <= 10; i++) {
         let visible = i == uv
-        doc.layers.getByName('uvi').layers.getByName(`${i}`).visible = visible
+        let uviLayer = doc.layers.getByName('uvi').layers.getByName(`${i}`)
+        setVisibility(uviLayer, visible)
     }
 }
