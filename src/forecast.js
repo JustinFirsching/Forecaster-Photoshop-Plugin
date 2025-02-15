@@ -130,16 +130,35 @@ function map_conditions(condition, cloudCov) {
 }
 
 function setText(textItem, text) {
+    if (textItem === undefined) {
+        console.error(`Text item is undefined. Unable to set text ${text}`)
+        return
+    }
+
     console.debug(`Setting ${textItem} text to ${text}`)
     textItem.contents = text
 }
 
 function setFontSize(textItem, doc, pt) {
+    if (textItem === undefined) {
+        console.warn(`Text item is undefined. Unable to set font size`)
+        return
+    }
+
     console.debug(`Setting ${textItem} size to ${pt}`)
     textItem.characterStyle.size = getFontSize(doc, pt)
 }
 
 function setVisibility(layer, visibility) {
+    if (layer === undefined) {
+        if (visibility) {
+            console.warn(`Layer is undefined. Unable to set visibility.`)
+        } else {
+            // No-op. Setting something that doesn't exist to invisible
+            console.debug(`Layer is undefined. Visibilty inherently false.`)
+        }
+        return
+    }
     console.debug(`Setting ${layer} visibility to ${visibility}`)
     layer.visible = visibility
 }
