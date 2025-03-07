@@ -121,6 +121,7 @@ let forecast_translations = {
 
 function map_conditions(condition, icon, cloudCov, precipProb) {
     fixed_conditions = null
+    fixed_icon = null
     if(precipProb >= 20) {
         if(cloudCov >= 50) {
             fixed_conditions = "Showers & Partly Cloudy"
