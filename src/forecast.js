@@ -405,7 +405,7 @@ function processForecastDataVisualCrossing(data) {
 
     let conditions = data.reduce((acc, day) => {
         const dateKey = new Date(day.datetimeEpoch * 1000).getDate()
-        acc[dateKey] = map_conditions(day.conditions, day.icons, cloudCover[dateKey], precipProb[dateKey])
+        acc[dateKey] = map_conditions(day.conditions, day.icon, cloudCover[dateKey], precipProb[dateKey])
         return acc
     }, {})
     console.log(conditions)
