@@ -886,9 +886,9 @@ function setFiveDayData(doc, data) {
         let precipitation =
             dayData != null ? getPrecipitationText(dayData.precipitation) : ''
         if (dayData.precipitation != null && dayData.precipitation >= 20) {
-            dayLayers.getByName('pop').visible = true
+            dayLayers.layers.getByName('pop').visible = true
         }
-        let precipitationTextItem = dayLayers
+        let precipitationTextItem = dayLayers.layers
             .getByName('pop')
             .layers.getByName(layerNames[i].precipitation).textItem
         setText(precipitationTextItem, precipitation)
