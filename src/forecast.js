@@ -115,18 +115,32 @@ let psd_weather_icon_layer_names = [
     'Wind',
 ]
 
-let condition_translations = {
+let forecast_translations = {
     "Clear": "Sunny",
 }
 
-function map_conditions(condition, cloudCov) {
-    if(condition == "Partially cloudy") {
-        if (cloudCov >= 20 && cloudCov < 50) {
-            return "Mostly Sunny"
+function map_conditions(condition, icon, cloudCov, precipProb) {
+    fixed_conditions = null
+    if(precipProb >= 20) {
+        if(cloudCov >= 50) {
+            fixed_conditions = "Showers & Partly Cloudy"
+            fixed_icon = "showers-day"
+        } else if (cloudCov >= 70) {
+            fixed_conditions = "Rain Showers"
+            fixed_icon = "rain"
         }
-        return "Partly Cloudy"
     }
-    return condition_translations[condition] ?? condition
+    else if(condition == "Partially cloudy") {
+        if (cloudCov >= 20 && cloudCov < 50) {
+            fixed_conditions = "Mostly Sunny"
+        } else {
+            fixed_conditions = "Partly Cloudy"
+        }
+    }
+    return {
+        conditions: fixed_conditions ?? forecast_translations[condition] ?? condition,
+        icon: fixed_icon ?? icon,
+    }
 }
 
 function setText(textItem, text) {
@@ -382,24 +396,24 @@ function processForecastDataVisualCrossing(data) {
         return acc
     }, {})
 
-    let conditions = data.reduce((acc, day) => {
+    let precipProb = data.reduce((acc, day) => {
         const dateKey = new Date(day.datetimeEpoch * 1000).getDate()
-        acc[dateKey] = map_conditions(day.conditions, cloudCover[dateKey])
+        acc[dateKey] = day.precipitation
         return acc
     }, {})
 
-    let icons = data.reduce((acc, day) => {
+    let conditions = data.reduce((acc, day) => {
         const dateKey = new Date(day.datetimeEpoch * 1000).getDate()
-        acc[dateKey] = day.icon
+        acc[dateKey] = map_conditions(day.conditions, day.icons, cloudCover[dateKey], precipProb[dateKey])
         return acc
     }, {})
-    console.log(icons)
+    console.log(conditions)
 
     let d1 = new Date(data[0].datetimeEpoch * 1000)
     let f = {
         date: d1.toLocaleDateString('en-US'),
-        conditions: conditions[d1.getDate()] || 'NOT FOUND',
-        icon: icons[d1.getDate()],
+        conditions: conditions[d1.getDate()].conditions || 'NOT FOUND',
+        icon: conditions[d1.getDate()].icon,
         day: {},
         night: {},
     }
@@ -430,8 +444,8 @@ function processForecastDataVisualCrossing(data) {
             // Reset
             f = {
                 date: time.toLocaleDateString('en-US'),
-                conditions: conditions[time.getDate()],
-                icon: icons[time.getDate()],
+                conditions: conditions[time.getDate()].conditions,
+                icon: icons[time.getDate()].icon,
                 day: {},
                 night: {},
             }
