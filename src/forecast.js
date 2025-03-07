@@ -165,9 +165,9 @@ function setVisibility(layer, visibility) {
 
 // Iterate through the elements of the `data` array
 // Each element has a `time` property that is a string in the format "YYYY-MM-DDTHH:MM:SSZ"
-// If the time is between 8 AM and 8 PM then save the `windGustAvg` value to f.dayGustAvg
-// If the time is between 8 PM and 8 AM the day after, save `windGustAvg` value to f.nightGustAvg
-// When we hit 8 AM the next day, push f to forecasts, and reset f to an empty object
+// If the time is between 7 AM and 7 PM then save the `windGustAvg` value to f.dayGustAvg
+// If the time is between 7 PM and 7 AM the day after, save `windGustAvg` value to f.nightGustAvg
+// When we hit 7 AM the next day, push f to forecasts, and reset f to an empty object
 // Return the forecasts array
 function processForecastDataTomorrowIO(data) {
     if (data.length == 0) {
@@ -191,7 +191,7 @@ function processForecastDataTomorrowIO(data) {
         // This is ugly I know
         forecast = forecast.values
 
-        if (hour === 8 && (dayCount > 0 || nightCount > 0)) {
+        if (hour === 7 && (dayCount > 0 || nightCount > 0)) {
             // Post process forecast data
             // Day
             if (dayCount > 0) {
@@ -220,7 +220,7 @@ function processForecastDataTomorrowIO(data) {
             nightCount = 0
         }
 
-        if (hour >= 8 && hour < 20) {
+        if (hour >= 7 && hour < 19) {
             dayCount++
 
             // Temperature
@@ -370,7 +370,7 @@ function processForecastDataVisualCrossing(data) {
         .flatMap((day) => day.hours)
         .filter((forecast) => {
             let thisDate = new Date(forecast.datetimeEpoch * 1000)
-            if (thisDate.getHours() == 8) {
+            if (thisDate.getHours() == 7) {
                 found = true
             }
             return found
@@ -408,7 +408,7 @@ function processForecastDataVisualCrossing(data) {
         const time = new Date(forecast.datetimeEpoch * 1000)
         const hour = time.getHours()
 
-        if (hour === 8 && (dayCount > 0 || nightCount > 0)) {
+        if (hour === 7 && (dayCount > 0 || nightCount > 0)) {
             // Post process forecast data
             // Day
             if (dayCount > 0) {
@@ -439,7 +439,7 @@ function processForecastDataVisualCrossing(data) {
             nightCount = 0
         }
 
-        if (hour >= 8 && hour < 20) {
+        if (hour >= 7 && hour < 19) {
             dayCount++
 
             // Temperature
