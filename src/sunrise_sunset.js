@@ -30,8 +30,8 @@ function setSunriseSunsetData(doc, data) {
         .layers.getByName('Group 8')
         .layers.getByName('upper')
         .layers.getByName('Valid 1/29/2024').textItem
-    dateTextItem.contents = `Valid ${todayString}`
-    dateTextItem.characterStyle.size = getFontSize(doc, FONT_SIZES['date'])
+    setText(dateTextItem, `Valid ${todayString}`)
+    setFontSize(dateTextItem, doc, FONT_SIZES['date'])
 
     let rootLayer = doc.layers.getByName('panels')
     let sunriseString = sunrise.toLocaleTimeString('en-US', {
@@ -39,16 +39,18 @@ function setSunriseSunsetData(doc, data) {
         minute: 'numeric',
         hour12: true,
     })
-    rootLayer.layers
+    let sunriseTimeTextItem = rootLayer.layers
         .getByName('up')
-        .layers.getByName('7:17 AM').textItem.contents = sunriseString
+        .layers.getByName('7:17 AM').textItem
+    setText(sunriseTimeTextItem, sunriseString)
 
     let sunsetString = sunset.toLocaleTimeString('en-US', {
         hour: 'numeric',
         minute: 'numeric',
         hour12: true,
     })
-    rootLayer.layers
+    let sunsetTimeTextItem = rootLayer.layers
         .getByName('down')
-        .layers.getByName('7:12 AM').textItem.contents = sunsetString
+        .layers.getByName('7:12 AM').textItem
+    setText(sunsetTimeTextItem, sunsetString)
 }
