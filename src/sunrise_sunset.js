@@ -31,7 +31,7 @@ function setSunriseSunsetData(doc, data) {
         .layers.getByName('upper')
         .layers.getByName('Valid 1/29/2024').textItem
     dateTextItem.contents = `Valid ${todayString}`
-    dateTextItem.characterStyle.size = getFontSize(doc, 'date')
+    dateTextItem.characterStyle.size = getFontSize(doc, FONT_SIZES['date'])
 
     let rootLayer = doc.layers.getByName('panels')
     let sunriseString = sunrise.toLocaleTimeString('en-US', {
