@@ -71,7 +71,7 @@ let visual_crossing_icon_mapping = {
     //   - "Rain"
     //   - "Thunderstorm 2"
     //   - "Rain + Sun copy"
-    //   - "Wind copy 2"
+    //   - "Wind"
     //   - "Sun icon"
     snow: [], // If we somehow get a snow icon, just clear the icons
     'snow-showers-day': [], // If we somehow get a snow icon, just clear the icons
@@ -703,6 +703,12 @@ function setTodayData(doc, data) {
     setFontSize(nightWindDirectionTextItem, doc, FONT_SIZES.wind_direction)
 
     let wanted_icons = visual_crossing_icon_mapping[todayData.icon] || []
+
+    // If max wind speed >= 15mph, use wind icon with anything else that is set
+    if(todayData.windSpeedMax >= 15) {
+        wanted_icons.push('Wind')
+    }
+
     console.log(`Received Icon: ${todayData.icon}`)
     console.log(`Wanted Icons: ${wanted_icons}`)
     // Iterate all of the icons and set them to visible if we want them and not
@@ -863,6 +869,12 @@ function setFiveDayData(doc, data) {
 
         // Try to set the icons
         let wanted_icons = visual_crossing_icon_mapping[forecast.icon] || []
+
+        // If max wind speed >= 15mph, use wind icon with anything else that is set
+        if(dayData.windSpeedMax >= 15) {
+            wanted_icons.push('Wind')
+        }
+
         console.log(`Received Icon: ${forecast.icon}`)
         console.log(`Wanted Icons: ${wanted_icons}`)
 
