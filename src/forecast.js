@@ -877,6 +877,9 @@ function setFiveDayData(doc, data) {
             wanted_icons.push('Wind')
         }
 
+        // Get the condition now, but don't change it incase icons mess something up
+        let conditionTextItem = dayLayers.layers.getByName(layerNames[i].conditions).textItem
+
         console.log(`Received Icon: ${forecast.icon}`)
         console.log(`Wanted Icons: ${wanted_icons}`)
 
@@ -890,9 +893,8 @@ function setFiveDayData(doc, data) {
 
         // If possible, do the weather text prediction
         // Do this after icons incase of name overlap
-        let conditionLayer = dayLayers.layers.getByName(layerNames[i].conditions)
-        setText(conditionLayer, forecast.conditions)
-        setVisibility(conditionLayer, true)
+        setText(conditionTextItem, forecast.conditions)
+        setVisibility(conditionTextItem, true)
     }
 }
 
