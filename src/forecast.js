@@ -117,7 +117,7 @@ let psd_weather_icon_layer_names = [
 
 let forecast_translations = {
     "Clear": "Sunny",
-    "Rain, Partially cloudy": "Rain & Partly Cloudy",
+    "Rain, Partially cloudy": "Rain & Partly\r\nCloudy",
     "Thunderstorm": "T-Storms",
 }
 
