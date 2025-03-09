@@ -123,20 +123,20 @@ function map_conditions(condition, icon, cloudCov, precipProb) {
     fixed_conditions = forecast_translations[condition]
     fixed_icon = null
     if(fixed_conditions !== undefined) {
-        if(precipProb >= 20) {
+        if(condition == "Partially cloudy") {
+            if (cloudCov >= 20 && cloudCov < 50) {
+                fixed_conditions = "Mostly Sunny"
+            } else {
+                fixed_conditions = "Partly Cloudy"
+            }
+        }
+        else if(precipProb >= 20) {
             if(cloudCov >= 50) {
                 fixed_conditions = "Showers & Partly Cloudy"
                 fixed_icon = "showers-day"
             } else if (cloudCov >= 70) {
                 fixed_conditions = "Rain Showers"
                 fixed_icon = "rain"
-            }
-        }
-        else if(condition == "Partially cloudy") {
-            if (cloudCov >= 20 && cloudCov < 50) {
-                fixed_conditions = "Mostly Sunny"
-            } else {
-                fixed_conditions = "Partly Cloudy"
             }
         }
     }
