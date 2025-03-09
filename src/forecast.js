@@ -122,7 +122,7 @@ let forecast_translations = {
 function map_conditions(condition, icon, cloudCov, precipProb) {
     fixed_conditions = forecast_translations[condition]
     fixed_icon = null
-    if(fixed_conditions !== undefined) {
+    if(fixed_conditions === undefined) {
         if(condition == "Partially cloudy") {
             if (cloudCov >= 20 && cloudCov < 50) {
                 fixed_conditions = "Mostly Sunny"
