@@ -118,6 +118,7 @@ let psd_weather_icon_layer_names = [
 let forecast_translations = {
     "Clear": "Sunny",
     "Rain, Partially cloudy": "Rain & Partly Cloudy",
+    "Thunderstorm": "T-Storms",
 }
 
 function map_conditions(condition, icon, cloudCov, precipProb) {
